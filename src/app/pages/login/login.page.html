@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+    <ion-button class="back-button" (click)="goBack()">
+      <ion-icon slot="start" name="arrow-back"></ion-icon>
+      Regresar
+    </ion-button>
+  </ion-buttons>
+    <ion-title class="text-center">Iniciar Sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="login-container">
+    <ion-img src="assets/img/login.png" class="login-image"></ion-img>
+    
+    <ion-card class="login-card">
+      <ion-item>
+        <ion-label position="floating">Correo Electrónico</ion-label>
+        <ion-input type="email"></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password"></ion-input>
+      </ion-item>
+      
+      <ion-button expand="block" class="ion-margin-top" color="primary" (click)="login()">Iniciar Sesión</ion-button>
+      
+      <div class="ion-text-center ion-margin-top">
+        <p>¿No tienes una cuenta? <a href="/registro">Regístrate</a></p>
+      </div>
+    </ion-card>
+  </div>
+</ion-content>

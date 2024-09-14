@@ -1,0 +1,59 @@
+/* Fondo azul para toda la página */
+ion-content {
+    --background: #e3f2fd; /* Color de fondo azul claro */
+  }
+  
+  /* Otros estilos... */
+  .text-center {
+    text-align: center;
+  }
+  
+  .register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .register-image {
+    width: 150px;
+    height: 150px;
+    margin: 20px auto;
+    border-radius: 50%;
+  }
+  
+  .register-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    background: #ffffff;
+  }
+  
+  ion-card {
+    background: #ffffff;
+  }
+  
+  ion-button {
+    --border-radius: 20px;
+  }
+  
+  ion-item {
+    --border-radius: 10px;
+  }
+  
+  ion-input {
+    --padding-start: 10px;
+  }
+  
+  p {
+    font-size: 0.9em;
+    color: #555;
+  }
+  
+  a {
+    color: #3880ff;
+    text-decoration: none;
+  }
+  

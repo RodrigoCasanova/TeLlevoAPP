@@ -1,0 +1,34 @@
+.menu-auto-container {
+  text-align: center;
+}
+
+ion-card {
+  margin: 20px auto;
+  max-width: 400px;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-button {
+  --border-radius: 20px;
+  margin-top: 15px;
+}
+
+ion-list {
+  margin-top: 20px;
+}
+
+ion-item {
+  --inner-padding-end: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+ion-label {
+  margin-left: 10px;
+}
+
+ion-buttons {
+  margin-left: auto;
+}

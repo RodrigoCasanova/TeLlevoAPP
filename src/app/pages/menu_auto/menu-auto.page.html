@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Gestión de Autos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="menu-auto-container">
+    <!-- Opciones de gestión de autos -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Opciones de Auto</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Botón para agregar auto -->
+        <ion-button expand="block" color="primary" (click)="addCar()">
+          <ion-icon slot="start" name="car"></ion-icon>
+          Agregar Auto
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de autos agregados -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Autos Agregados</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let car of cars">
+            <ion-checkbox slot="start" [(ngModel)]="car.selected" (ionChange)="updateSelectedCar(car)"></ion-checkbox>
+            <ion-icon slot="start" name="car" color="primary"></ion-icon>
+            <ion-label>
+              <h2>{{ car.make }} {{ car.model }}</h2>
+              <p>Año: {{ car.year }}</p>
+              <p>Color: {{ car.color }}</p>
+              <p>Patente: {{ car.licensePlate }}</p>
+            </ion-label>
+            <ion-buttons slot="end">
+              <!-- Botón para editar -->
+              <!-- Botón para eliminar -->
+              <ion-button fill="clear" color="danger" (click)="confirmDelete(car)">
+                <ion-icon name="trash"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botón para ofrecer transporte -->
+    <ion-button 
+      *ngIf="selectedCar" 
+      expand="block" 
+      color="primary" 
+      (click)="offerTransport()">
+      Ofrecer Transporte
+    </ion-button>
+  </div>
+</ion-content>

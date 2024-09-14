@@ -18,20 +18,20 @@ export class HomePage {
   }
 
   // Método para abrir la página de registro
-  openRegister() {
-    this.navCtrl.navigateForward('/register');
+  openRegistro() {
+    this.navCtrl.navigateForward('/registro');
   }
 
   // Método para registrar al usuario como conductor
   registerAsDriver() {
     // Implementa la lógica para registrar al usuario como conductor
-    console.log('Usuario registrado como conductor');
+    this.navCtrl.navigateForward('/menu_auto');
   }
 
   // Método para buscar transporte
   findRide() {
     // Implementa la lógica para buscar transporte
-    console.log('Búsqueda de transporte');
+    this.navCtrl.navigateForward('/transporte');
   }
 
   // Método para cancelar el viaje

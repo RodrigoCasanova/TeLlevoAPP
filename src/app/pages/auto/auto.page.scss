@@ -1,0 +1,29 @@
+.auto-container {
+  text-align: center;
+}
+
+ion-card {
+  margin: 20px auto;
+  max-width: 400px;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+ion-button {
+  --border-radius: 20px;
+  margin-top: 20px;
+}
+
+ion-item {
+  margin-bottom: 15px;
+}
+
+ion-label {
+  font-size: 14px;
+  color: #3880ff; /* Color del título */
+}
+
+ion-input, ion-textarea {
+  padding-top: 10px; /* Ajuste para que el título flotante no interfiera con el texto */
+}

@@ -1,0 +1,40 @@
+ion-header {
+    --background: #f8f9fa; /* Fondo del encabezado */
+  }
+  
+  .back-button {
+    margin-top: 8px; /* Ajusta este valor para mover el botón más arriba o abajo */
+    margin-left: 10px; /* Ajusta si quieres mover el botón hacia la izquierda o derecha */
+  }
+  
+  .conductor-container {
+    text-align: center;
+  }
+  
+  ion-card {
+    margin: 20px auto;
+    max-width: 400px;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  ion-button {
+    --border-radius: 20px;
+    margin-top: 20px;
+  }
+  
+  ion-item {
+    margin-bottom: 15px;
+  }
+  
+  ion-label {
+    font-size: 14px;
+    color: #3880ff; /* Color del título */
+  }
+  
+  ion-input,
+  ion-select {
+    padding-top: 10px; /* Ajuste para que el título flotante no interfiera con el texto */
+  }
+  

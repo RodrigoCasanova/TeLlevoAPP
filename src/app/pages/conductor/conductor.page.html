@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Ofrecer Transporte</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" >
+  <div class="conductor-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Ofrecer Transporte</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Ubicación de Inicio -->
+        <ion-item>
+          <ion-label position="floating">Ubicación de Inicio</ion-label>
+          <ion-select placeholder="Selecciona una ubicación">
+            <ion-select-option value="concepcion">Concepción</ion-select-option>
+            <ion-select-option value="chiguayante">Chiguayante</ion-select-option>
+            <ion-select-option value="san_pedro">San Pedro de la Paz</ion-select-option>
+            <ion-select-option value="talcahuano">Talcahuano</ion-select-option>
+            <ion-select-option value="hualqui">Hualqui</ion-select-option>
+            <ion-select-option value="hualpen">Hualpén</ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <!-- Fecha y Hora de Inicio -->
+        <ion-item>
+          <ion-label position="floating">Fecha y Hora de Inicio</ion-label>
+          <ion-datetime 
+            displayFormat="DD/MM/YYYY HH:mm"
+            pickerFormat="DD/MM/YYYY HH:mm"
+            min="2024-09-16T06:00" 
+            max="2024-09-21T22:00"
+            [disabled]="false">
+          </ion-datetime>
+        </ion-item>
+        
+        <!-- Número de Asientos -->
+        <ion-item>
+          <ion-label position="floating">Número de Asientos</ion-label>
+          <ion-select placeholder="Selecciona" interface="action-sheet">
+            <ion-select-option value="1">1</ion-select-option>
+            <ion-select-option value="2">2</ion-select-option>
+            <ion-select-option value="3">3</ion-select-option>
+            <ion-select-option value="4">4</ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <!-- Costo por Persona -->
+        <ion-item>
+          <ion-label position="floating">Costo por Persona</ion-label>
+          <ion-input type="number"></ion-input>
+        </ion-item>
+        
+        <ion-button expand="block" color="primary" (click)="offerTransport()">Ofrecer Transporte</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
