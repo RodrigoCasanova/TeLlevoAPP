@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Ruta del Pasajero</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Imagen del mapa -->
+  <div class="map-placeholder">
+    <img src="assets/img/mapa_pasajero.jpeg" alt="Ruta del Pasajero">
+  </div>
+
+  <!-- Detalles del Viaje -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Detalles del Viaje</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>
+          <h2>Ubicación del Conductor:</h2>
+          <p>{{ ride.driverLocation }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Destino:</h2>
+          <p>{{ ride.destination }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Hora de Salida:</h2>
+          <p>{{ ride.departureTime }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Total a Pagar:</h2>
+          <p>{{ totalCost }} CLP</p>
+        </ion-label>
+      </ion-item>
+      <ion-button expand="full" color="primary" (click)="shareLocation()">
+        Ir al Home
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

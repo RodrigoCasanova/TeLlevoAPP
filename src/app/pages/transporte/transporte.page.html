@@ -6,30 +6,39 @@
         Regresar
       </ion-button>
     </ion-buttons>
-    <ion-title>Buscar Transporte</ion-title>
+    <ion-title>Viajes Disponibles</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="transporte-container">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Buscar Transporte</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item>
-          <ion-label position="floating">Destino</ion-label>
-          <ion-input type="text"></ion-input>
-        </ion-item>
-        
-        <ion-item>
-          <ion-label position="floating">Fecha y Hora</ion-label>
-          <ion-datetime></ion-datetime>
-        </ion-item>
-        
-        <ion-button expand="block" color="primary" (click)="searchTransport()">Buscar</ion-button>
-      </ion-card-content>
-    </ion-card>
-    
-  </div>
+  <!-- Filtro de ubicación -->
+  <ion-item>
+    <ion-label>Buscar en:</ion-label>
+    <ion-select [(ngModel)]="selectedLocation" (ionChange)="filterRides()">
+      <ion-select-option value="all">Todos</ion-select-option>
+      <ion-select-option value="concepcion">Concepción</ion-select-option>
+      <ion-select-option value="Chiguayante">Chiguayante</ion-select-option>
+      <ion-select-option value="San Pedro">San Pedro de la Paz</ion-select-option>
+      <ion-select-option value="Talcahuano">Talcahuano</ion-select-option>
+      <ion-select-option value="hualqui">Hualqui</ion-select-option>
+      <ion-select-option value="Penco">Penco</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- Lista de viajes -->
+  <ion-list>
+    <ion-item *ngFor="let ride of filteredRides">
+      <ion-avatar slot="start">
+        <ion-img [src]="ride.driverImage"></ion-img>
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ ride.driverName }}</h2>
+        <p>{{ ride.location }}</p>
+        <p>{{ ride.destination }}</p>
+        <p>Hora: {{ ride.departureTime }}</p>
+        <p>Costo: {{ ride.costPerKm }} CLP/km</p>
+      </ion-label>
+      <ion-button (click)="startRide(ride)" slot="end">Solicitar</ion-button>
+    </ion-item>
+  </ion-list>
 </ion-content>

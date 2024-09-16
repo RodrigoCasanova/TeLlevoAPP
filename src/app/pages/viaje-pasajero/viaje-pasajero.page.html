@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Detalles del Viaje</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Imagen del mapa -->
+  <div class="map-placeholder">
+    <img src="assets/img/map.jpeg" alt="Mapa del viaje">
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Detalles del Viaje</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <!-- Información del viaje -->
+      <ion-item>
+        <ion-label>
+          <h2>Conductor: {{ ride.driverName }}</h2>
+          <p>Ubicación actual: {{ ride.currentLocation }}</p>
+          <p>Destino: {{ ride.destination }}</p>
+          <p>Hora de salida: {{ ride.departureTime }}</p>
+          <p>Tiempo estimado de llegada: {{ ride.estimatedArrival }}</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-button expand="full" color="primary" (click)="startTrip()">Compartir ubicación</ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

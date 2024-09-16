@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+
 const routes: Routes = [
   {
     path: 'home',
@@ -35,6 +36,24 @@ const routes: Routes = [
     path: 'menu_auto',
     loadChildren: () => import('./pages/menu_auto/menu-auto.module').then( m => m.MenuAutoPageModule)
   },
+  {
+    path: 'viaje-conductor',
+    loadChildren: () => import('./pages/viaje-conductor/viaje-conductor.module').then( m => m.ViajeConductorPageModule)
+  },
+  {
+    path: 'viaje-pasajero',
+    loadChildren: () => import('./pages/viaje-pasajero/viaje-pasajero.module').then( m => m.ViajePasajeroPageModule)
+  },
+  {
+    path: 'ruta-conductor',
+    loadChildren: () => import('./pages/ruta-conductor/ruta-conductor.module').then( m => m.RutaConductorPageModule)
+  },
+  {
+    path: 'ruta-pasajero',
+    loadChildren: () => import('./pages/ruta-pasajero/ruta-pasajero.module').then( m => m.RutaPasajeroPageModule)
+  },
+
+ 
   
 
 

@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Ruta del Conductor</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Mapa o Imagen de la Ruta -->
+  <div class="map-placeholder">
+    <img src="assets/img/map.jpeg" alt="Ruta del Conductor">
+  </div>
+
+  <!-- Detalles de la Ruta -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Detalles de la Ruta</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>
+          <h2>Destino Final:</h2>
+          <p>{{ ride.destination }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h2>Puntos de Recogida:</h2>
+          <ion-list>
+            <ion-item *ngFor="let point of pickupPoints">
+              <ion-avatar slot="start">
+                <ion-img [src]="point.image"></ion-img>
+              </ion-avatar>
+              <ion-label>
+                <p>{{ point.location }} - {{ point.time }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

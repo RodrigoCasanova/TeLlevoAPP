@@ -1,16 +1,33 @@
-.transporte-container {
-    text-align: center;
-  }
-  
-  ion-card {
-    margin: 20px auto;
-    max-width: 400px;
-    border-radius: 15px;
-    background: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  ion-button {
-    --border-radius: 20px;
-  }
-  
+ion-item {
+  margin-bottom: 10px;
+}
+
+ion-avatar {
+  margin-right: 10px;
+}
+
+ion-label {
+  display: flex;
+  flex-direction: column;
+}
+
+ion-button {
+  --border-radius: 20px;
+}
+/* Fondo azul para toda la página */
+ion-content {
+  --background: #e3f2fd; /* Color de fondo azul claro */
+}
+
+/* Estilos adicionales para el contenedor y la tarjeta */
+.welcome-container {
+  text-align: center;
+  margin: 20px;
+}
+
+.welcome-container img {
+  width: 150px;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 10px;
+}
