@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="text-center">Recuperar Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="register-container">
+    <ion-img src="assets/img/login.png" class="register-image"></ion-img> <!-- Asegúrate de tener una imagen relevante -->
+
+    <ion-card class="register-card">
+      <form [formGroup]="recuperarForm" (ngSubmit)="onSubmit()">
+        <ion-item>
+          <ion-label position="floating">Correo Electrónico</ion-label>
+          <ion-input formControlName="email" type="email"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" color="primary" class="ion-margin-top" type="submit" [disabled]="!recuperarForm.valid || loading">
+          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+          <ion-icon *ngIf="!loading" slot="start" name="send-outline"></ion-icon>
+          Enviar Instrucciones
+        </ion-button>
+      </form>
+
+      <div class="ion-text-center ion-margin-top">
+        <!-- Mensaje de éxito -->
+        <ion-text *ngIf="successMessage" color="success">
+          <p>{{ successMessage }}</p>
+        </ion-text>
+
+        <!-- Mensaje de error -->
+        <ion-text *ngIf="errorMessage" color="danger">
+          <p>{{ errorMessage }}</p>
+        </ion-text>
+      </div>
+    </ion-card>
+  </div>
+</ion-content>

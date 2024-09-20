@@ -1,0 +1,62 @@
+/* Fondo claro para toda la página */
+ion-content {
+    --background: #ffffff; /* Fondo blanco */
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Contenedor del formulario */
+.register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Imagen de cabecera */
+.register-image {
+    width: 150px;
+    height: 150px;
+    margin: 20px auto;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tarjeta del formulario */
+.register-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    background: #ffffff;
+}
+
+/* Estilo de botones */
+ion-button {
+    --border-radius: 20px;
+}
+
+/* Estilo de los campos de formulario */
+ion-item {
+    --border-radius: 10px;
+}
+
+ion-input {
+    --padding-start: 10px;
+}
+
+/* Mensajes de texto */
+p {
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* Estilo de los enlaces */
+a {
+    color: #3880ff;
+    text-decoration: none;
+}
