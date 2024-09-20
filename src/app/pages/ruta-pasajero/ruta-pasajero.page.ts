@@ -8,8 +8,9 @@ import { NavController, AlertController } from '@ionic/angular';
 })
 export class RutaPasajeroPage {
   ride = {
-    driverLocation: 'Concepción',
-    destination: 'Duoc UC Concepción',
+    driverLocation: 'Duoc UC Concepción',
+    destination: 'Penco',
+    uwu: 'Disponible',
     departureTime: '10:00',
   };
 

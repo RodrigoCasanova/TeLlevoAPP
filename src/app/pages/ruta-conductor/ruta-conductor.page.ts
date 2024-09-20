@@ -8,13 +8,13 @@ import { NavController } from '@ionic/angular';
 })
 export class RutaConductorPage {
   ride = {
-    destination: 'Duoc UC Concepción',
+    destination: 'Penco',
   };
 
   pickupPoints = [
-    { location: 'Avenida O\'Higgins 1234', time: '18:15', image: 'assets/img/Luis.jpeg' },
-    { location: 'Calle Prat 5678', time: '18:30', image: 'assets/img/paillan.jpeg' },
-    { location: 'Calle Colón 9876', time: '18:45', image: 'assets/img/carlos.jpeg' },
+    { location: 'DuocUC Concepción', time: '13:15', image: 'assets/img/Luis.jpeg' },
+    { location: 'DuocUC Concepción', time: '18:30', image: 'assets/img/paillan.jpeg' },
+    { location: 'DuocUC Concepción', time: '15:45', image: 'assets/img/carlos.jpeg' },
   ];
 
   constructor(private navCtrl: NavController) {}
