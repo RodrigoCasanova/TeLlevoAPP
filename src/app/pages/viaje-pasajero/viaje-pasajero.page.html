@@ -28,12 +28,13 @@
           <h2>Conductor: {{ ride.driverName }}</h2>
           <p>Ubicación actual: {{ ride.currentLocation }}</p>
           <p>Destino: {{ ride.destination }}</p>
+          <p>Asientos: {{ ride.uwu }}</p>
           <p>Hora de salida: {{ ride.departureTime }}</p>
           <p>Tiempo estimado de llegada: {{ ride.estimatedArrival }}</p>
         </ion-label>
       </ion-item>
 
-      <ion-button expand="full" color="primary" (click)="startTrip()">Compartir ubicación</ion-button>
+      <ion-button expand="full" color="primary" (click)="startTrip()">Aceptar Viaje</ion-button>
     </ion-card-content>
   </ion-card>
 </ion-content>

@@ -6,13 +6,14 @@ import { NavController, AlertController } from '@ionic/angular';
   templateUrl: './viaje-pasajero.page.html',
   styleUrls: ['./viaje-pasajero.page.scss'],
 })
-export class ViajePasajeroPage implements OnInit {
+export class ViajePasajeroPage  {
   ride = {
     driverName: 'Jose Paillan',
-    currentLocation: 'Concepción',
-    destination: 'Duoc UC Concepción',
-    departureTime: '10:00',
-    estimatedArrival: '10:30',
+    currentLocation: 'DuocUC Concepción',
+    destination: 'Penco',
+    uwu: 'Disponible',
+    departureTime: '13:00',
+    estimatedArrival: '13:30',
   };
 
   constructor(
@@ -20,7 +21,6 @@ export class ViajePasajeroPage implements OnInit {
     private alertController: AlertController
   ) {}
 
-  ngOnInit() {}
 
   goBack() {
     this.navCtrl.back();
@@ -28,8 +28,8 @@ export class ViajePasajeroPage implements OnInit {
 
   async startTrip() {
     const alert = await this.alertController.create({
-      header: 'Ubicación Compartida',
-      message: 'Tu ubicación ha sido compartida.',
+      header: 'Viaje Aceptado',
+      message: 'Ubicación del Automovil compartida.',
       buttons: [
         {
           text: 'Volver al Home',
