@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mensajes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngFor="let msg of messages">
+    <ion-item [color]="msg.senderId === currentUserId ? 'primary' : 'secondary'">
+      <ion-label>
+        <h3>{{ msg.senderName }}</h3>
+        <p>{{ msg.text }}</p>
+        <p class="time">{{ msg.timestamp }}</p>
+      </ion-label>
+    </ion-item>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-item>
+      <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje"></ion-input>
+      <ion-button (click)="sendMessage()" slot="end">Enviar</ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

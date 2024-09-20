@@ -51,9 +51,15 @@ const routes: Routes = [
   {
     path: 'ruta-pasajero',
     loadChildren: () => import('./pages/ruta-pasajero/ruta-pasajero.module').then( m => m.RutaPasajeroPageModule)
-  },  {
+  },
+  {
     path: 'recuperar',
     loadChildren: () => import('./pages/recuperar/recuperar.module').then( m => m.RecuperarPageModule)
+  },
+  
+  {
+    path: 'chat',
+    loadChildren: () => import('./pages/chat/chat.module').then( m => m.ChatPageModule)
   },
 
 

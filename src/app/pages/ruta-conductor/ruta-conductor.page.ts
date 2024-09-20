@@ -13,13 +13,17 @@ export class RutaConductorPage {
 
   pickupPoints = [
     { location: 'DuocUC Concepción', time: '13:15', image: 'assets/img/Luis.jpeg' },
-    { location: 'DuocUC Concepción', time: '18:30', image: 'assets/img/paillan.jpeg' },
-    { location: 'DuocUC Concepción', time: '15:45', image: 'assets/img/carlos.jpeg' },
+    { location: 'DuocUC Concepción', time: '13:15', image: 'assets/img/paillan.jpeg' },
+    { location: 'DuocUC Concepción', time: '13:15', image: 'assets/img/carlos.jpeg' },
   ];
 
   constructor(private navCtrl: NavController) {}
 
   goBack() {
     this.navCtrl.back();
+  }
+
+  goHome() {
+    this.navCtrl.navigateRoot('/home');
   }
 }
