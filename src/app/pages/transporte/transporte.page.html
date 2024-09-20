@@ -39,7 +39,10 @@
         <p>Hora: {{ ride.departureTime }}</p>
         <p>Costo: {{ ride.costPerKm }} CLP/km</p>
       </ion-label>
-      <ion-button (click)="startRide(ride)" slot="end">Solicitar</ion-button>
+      <!-- Muestra el botón si hay asientos disponibles -->
+      <ion-button *ngIf="ride.uwu > 0" (click)="startRide(ride)" slot="end">Solicitar</ion-button>
+      <!-- Muestra un mensaje si no hay asientos disponibles -->
+      <p *ngIf="ride.uwu === 0" slot="end" style="color: red; font-weight: bold;">No Disponible</p>
     </ion-item>
   </ion-list>
 </ion-content>
