@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 
@@ -56,8 +57,18 @@ const routes: Routes = [
     path: 'recuperar',
     loadChildren: () => import('./pages/recuperar/recuperar.module').then( m => m.RecuperarPageModule)
   },
-  
-
+  {
+    path: 'perfil',
+    loadChildren: () => import('./pages/perfil/perfil.module').then( m => m.PerfilPageModule)
+  },
+  {
+    path: 'edit-profile',
+    loadChildren: () => import('./pages/edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./pages/chat/chat.module').then( m => m.ChatPageModule)
+  },
 
  
   

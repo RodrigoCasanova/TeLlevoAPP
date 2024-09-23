@@ -3,7 +3,6 @@
     <ion-buttons slot="start">
       <ion-button class="back-button" (click)="goBack()">
         <ion-icon slot="start" name="arrow-back"></ion-icon>
-        Regresar
       </ion-button>
     </ion-buttons>
     <ion-title>Agregar Auto</ion-title>
@@ -19,7 +18,7 @@
       <ion-card-content>
         <!-- Marca del Auto -->
         <ion-item>
-          <ion-label position="floating">Marca</ion-label>
+          <ion-label>Marca</ion-label>
           <ion-select [(ngModel)]="car.brand" (ionChange)="updateModels($event)" placeholder="Selecciona una marca">
             <ion-select-option value="toyota">Toyota</ion-select-option>
             <ion-select-option value="nissan">Nissan</ion-select-option>
@@ -37,7 +36,7 @@
 
         <!-- Modelo del Auto -->
         <ion-item>
-          <ion-label position="floating">Modelo</ion-label>
+          <ion-label>Modelo</ion-label>
           <ion-select [(ngModel)]="car.model" placeholder="Selecciona un modelo">
             <ion-select-option *ngFor="let model of models" [value]="model">{{ model }}</ion-select-option>
             <ion-select-option value="otro">Otro</ion-select-option>
@@ -46,7 +45,7 @@
 
         <!-- Año del Auto -->
         <ion-item>
-          <ion-label position="floating">Año</ion-label>
+          <ion-label >Año</ion-label>
           <ion-select [(ngModel)]="car.year" placeholder="Selecciona un año">
             <ion-select-option *ngFor="let year of years" [value]="year">{{ year }}</ion-select-option>
           </ion-select>
@@ -54,7 +53,7 @@
 
         <!-- Color del Auto -->
         <ion-item>
-          <ion-label position="floating">Color</ion-label>
+          <ion-label>Color</ion-label>
           <ion-select [(ngModel)]="car.color" placeholder="Selecciona un color">
             <ion-select-option value="blanco">Blanco</ion-select-option>
             <ion-select-option value="negro">Negro</ion-select-option>
@@ -69,13 +68,13 @@
 
         <!-- Patente del Auto -->
         <ion-item>
-          <ion-label position="floating">Patente</ion-label>
+          <ion-label >Patente</ion-label>
           <ion-input [(ngModel)]="car.plate" placeholder="Ej: ABC1234" type="text"></ion-input>
         </ion-item>
 
         <!-- Descripción -->
         <ion-item>
-          <ion-label position="floating">Descripción</ion-label>
+          <ion-label>Descripción</ion-label>
           <ion-textarea [(ngModel)]="car.description"></ion-textarea>
         </ion-item>
 
