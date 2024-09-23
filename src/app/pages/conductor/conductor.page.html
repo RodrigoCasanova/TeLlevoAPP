@@ -58,13 +58,6 @@
         </ion-item>
 
         <!-- Tipo de Costo -->
-        <ion-item>
-          <ion-label position="floating">Tipo de Costo</ion-label>
-          <ion-select [(ngModel)]="costType" placeholder="Selecciona el tipo de costo">
-            <ion-select-option value="fixed">Costo Fijo</ion-select-option>
-            <ion-select-option value="perKm">Costo por Kilómetro</ion-select-option>
-          </ion-select>
-        </ion-item>
 
         <!-- Costo por Persona -->
         <ion-item *ngIf="costType === 'fixed'">

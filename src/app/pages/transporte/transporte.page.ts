@@ -69,11 +69,12 @@ export class TransportePage implements OnInit {
       const rideTime = new Date();
       const [hours, minutes] = ride.departureTime.split(':').map(Number);
       rideTime.setHours(hours, minutes);
-
+  
       return (
         (this.selectedLocation === 'all' || ride.location.toLowerCase() === this.selectedLocation.toLowerCase()) &&
         rideTime >= now &&
-        ride.destination === 'Duoc UC Concepción'
+        ride.destination === 'Duoc UC Concepción' &&
+        ride.uwu > 0 // Asegúrate de que haya asientos disponibles
       );
     });
     this.filteredRides = filtered;

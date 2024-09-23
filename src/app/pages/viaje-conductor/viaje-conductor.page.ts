@@ -8,10 +8,10 @@ import { NavController, AlertController } from '@ionic/angular';
 })
 export class ViajeConductorPage {
   ride: any = {
-    startLocation: 'Tu Ubicación',
-    destination: 'Duoc UC Concepción',
+    startLocation: 'Duoc UC Concepción',
+    destination: 'Penco',
     departureTime: '18:30',
-    costPerKm: 250,
+    costPerKm: 1500,
   };
 
   passengers: any[] = [

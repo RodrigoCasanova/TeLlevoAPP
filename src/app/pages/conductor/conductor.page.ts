@@ -63,10 +63,10 @@ export class ConductorPage {
     // Mostrar alerta de confirmación
     const confirmationAlert = await this.alertController.create({
       header: 'Confirmar',
-      message: `¿Estás seguro de ofrecer transporte con los siguientes detalles?<br>
-                Ubicación: ${this.selectedLocation}<br>
-                Fecha y Hora: ${this.startDateTime}<br>
-                Número de Asientos: ${this.seats}<br>
+      message: `¿Estás seguro de ofrecer transporte con los siguientes detalles?
+                Ubicación: ${this.selectedLocation}
+                Fecha y Hora: ${this.startDateTime}
+                Número de Asientos: ${this.seats}
                 Costo: ${this.cost} ${this.costType === 'perKm' ? 'por Kilómetro' : 'Fijo'}`,
       buttons: [
         {

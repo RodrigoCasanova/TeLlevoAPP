@@ -20,6 +20,15 @@
     <img src="assets/img/mapa_pasajero.jpeg" alt="Ruta del Pasajero">
   </div>
 
+  <!-- Sección del auto -->
+  <div class="car-details">
+    <div class="car-info">
+      <p><strong>Modelo:</strong> {{ ride.carModel }}</p>
+      <p><strong>Patente:</strong> {{ ride.carPlate }}</p>
+      <p><strong>Color:</strong> {{ ride.carColor }}</p>
+    </div>
+  </div>
+
   <!-- Detalles del Viaje -->
   <ion-card>
     <ion-card-header>
@@ -56,18 +65,7 @@
           <p>{{ totalCost }} CLP</p>
         </ion-label>
       </ion-item>
-      <ion-item>
-        <ion-label>
-          <h2>Patente del Auto:</h2>
-          <p>{{ ride.carPlate }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h2>Color del Auto:</h2>
-          <p>{{ ride.carColor }}</p>
-        </ion-label>
-      </ion-item>
+      
       <ion-button expand="full" color="primary" (click)="shareLocation()">
         Ir al Home
       </ion-button>
