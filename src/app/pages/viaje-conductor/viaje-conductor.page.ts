@@ -70,7 +70,7 @@ export class ViajeConductorPage {
           text: 'Confirmar',
           handler: () => {
             // Navigate to the next page or handle scheduling logic
-            this.navCtrl.navigateForward('/some-other-page'); // Cambia '/some-other-page' por la ruta deseada
+            this.navCtrl.navigateForward('/ruta-conductor'); // Cambia '/some-other-page' por la ruta deseada
           },
         },
       ],

@@ -45,7 +45,7 @@ export class HomePage {
         {
           text: 'Conductor',
           handler: () => {
-            this.navCtrl.navigateForward('/ruta-conductor'); // Navega a la página de conductor
+            this.navCtrl.navigateForward('/viaje-conductor'); // Navega a la página de conductor
           }
         },
         {
