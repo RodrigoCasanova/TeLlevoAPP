@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-chat',
@@ -14,6 +15,8 @@ export class ChatPage {
   newMessage: string = '';
   currentUserId: string = '2'; // Simulación del ID del usuario actual (Pasajero)
 
+  constructor(private navCtrl: NavController) {}
+
   sendMessage() {
     if (this.newMessage.trim()) {
       this.messages.push({
@@ -24,5 +27,9 @@ export class ChatPage {
       });
       this.newMessage = '';
     }
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 }
