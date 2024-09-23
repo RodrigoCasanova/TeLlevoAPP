@@ -1,18 +1,32 @@
 ion-avatar {
-    --border-radius: 50%;
-    --size: 1500px; /* Tamaño aumentado */
-    margin: 15px 0px 35px 110px;
-  }
-  
-  ion-card-title {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 1.5em;
-  }
-  
-  ion-card-content p {
-    margin: 10px 0;
-    font-size: 1.2em;
-    text-align: center;
-  }
-  
+  --border-radius: 50%;
+  --size: 150px; /* Tamaño del avatar */
+  width: 150px; /* Asegúrate de que el ancho sea fijo */
+  height: 150px; /* Asegúrate de que la altura sea fija */
+  margin: 15px 0px 35px 60px;
+  display: flex; /* Usar flexbox */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  overflow: hidden; /* Recorta cualquier parte que sobresalga */
+}
+
+ion-img {
+  width: 150px; /* Ajusta al mismo tamaño que el avatar */
+  height: 150px; /* Ajusta al mismo tamaño que el avatar */
+  object-fit: cover; /* Asegura que la imagen cubra el contenedor */
+}
+
+
+
+
+ion-card-title {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 1.5em;
+}
+
+ion-card-content p {
+  margin: 10px 0;
+  font-size: 1.2em;
+  text-align: center;
+}
