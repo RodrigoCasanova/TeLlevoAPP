@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
-
+import { Router } from '@angular/router'; // Importa Router para la navegación
 @Component({
   selector: 'app-ruta-conductor',
   templateUrl: './ruta-conductor.page.html',
@@ -12,12 +12,12 @@ export class RutaConductorPage {
   };
 
   pickupPoints = [
-    { location: 'DuocUC Concepción', time: '13:15', image: 'assets/img/Luis.jpeg' },
-    { location: 'DuocUC Concepción', time: '13:15', image: 'assets/img/paillan.jpeg' },
-    { location: 'DuocUC Concepción', time: '13:15', image: 'assets/img/carlos.jpeg' },
+    { location: 'DuocUC Concepción', time: '18:00', image: 'assets/img/Luis.jpeg' },
+    { location: 'DuocUC Concepción', time: '18:00', image: 'assets/img/paillan.jpeg' },
+    { location: 'DuocUC Concepción', time: '18:00', image: 'assets/img/carlos.jpeg' },
   ];
 
-  constructor(private navCtrl: NavController) {}
+  constructor(private navCtrl: NavController, private router: Router) {}
 
   goBack() {
     this.navCtrl.back();
@@ -25,5 +25,8 @@ export class RutaConductorPage {
 
   goHome() {
     this.navCtrl.navigateRoot('/home');
+  }
+  navigateToChat() {
+    this.router.navigate(['/chat']); // Ajusta la ruta según tu configuración
   }
 }

@@ -13,12 +13,14 @@ export class RutaPasajeroPage {
     destination: 'Penco',
     uwu: 'Disponible',
     departureTime: '10:00',
-    carPlate: 'ABC123', // Agregada la patente del auto
-    carColor: 'Rojo',   // Agregado el color del auto
+    carPlate: 'ABC123',
+    carColor: 'Rojo',
+    carModel: 'Toyota Corolla',
   };
+  
 
   costPerKm = 250; // Costo por kilómetro
-  distance = 6; // Distancia estimada en kilómetros
+  distance = 6;    // Distancia estimada en kilómetros
   totalCost = this.costPerKm * this.distance; // Cálculo del costo total
 
   constructor(private navCtrl: NavController, private alertController: AlertController, private router: Router) {}
@@ -34,5 +36,4 @@ export class RutaPasajeroPage {
   navigateToChat() {
     this.router.navigate(['/chat']); // Ajusta la ruta según tu configuración
   }
-  
 }

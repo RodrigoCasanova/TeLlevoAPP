@@ -1,15 +1,18 @@
-.map-placeholder {
-    text-align: center;
-    margin: 20px 0;
-  }
-  
-  .map-placeholder img {
-    width: 100%;
-    height: auto;
-  }
-  
-  ion-card {
-    margin: 20px auto;
-    max-width: 600px;
-  }
-  
+.car-details {
+  margin: 10px 0; // Espaciado arriba y abajo
+  padding: 10px;
+  background-color: #f9f9f9; // Fondo suave
+  border-radius: 5px; // Esquinas redondeadas
+  border: 1px solid #ccc; // Borde sutil
+}
+
+.car-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.car-info p {
+  margin: 0; // Elimina margen para una mejor alineación
+  padding: 2px 0; // Espacio entre líneas
+  font-size: 14px; // Tamaño de fuente
+}
