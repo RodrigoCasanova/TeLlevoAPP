@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-avatar>
+        <ion-img src="assets/img/rodri.jpg" style="width: 100px; height: auto; text-align: center;"></ion-img>
+      </ion-avatar>
+        <ion-card-title class="text-center"> {{ name }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p><strong>Correo:</strong> {{ email }}</p>
+      <p><strong>Teléfono:</strong> {{ phone }}</p>
+      <p><strong>Biografía:</strong> {{ bio }}</p>
+      <p><strong>Ciudad:</strong> {{ city }}</p>
+      <p><strong>Vehículo:</strong> {{ vehicle }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="full" color="primary" (click)="editProfile()">Editar Perfil</ion-button>
+</ion-content>
