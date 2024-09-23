@@ -7,8 +7,8 @@ import { Component } from '@angular/core';
 })
 export class ChatPage {
   messages = [
-    { senderId: '1', senderName: 'Conductor', text: 'Hola, estoy cerca', timestamp: '10:30 AM' },
-    { senderId: '2', senderName: 'Pasajero', text: '¡Perfecto, gracias!', timestamp: '10:32 AM' }
+    { senderId: '1', senderName: 'Pasajero', text: 'Hola, estoy cerca', timestamp: '10:30 AM' },
+    { senderId: '2', senderName: 'Conductor', text: '¡Perfecto, gracias!', timestamp: '10:32 AM' }
   ];
   
   newMessage: string = '';
