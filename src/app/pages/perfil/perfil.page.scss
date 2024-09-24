@@ -1,13 +1,23 @@
-ion-avatar {
-  --border-radius: 50%;
-  --size: 150px; /* Tamaño del avatar */
-  width: 150px; /* Asegúrate de que el ancho sea fijo */
-  height: 150px; /* Asegúrate de que la altura sea fija */
-  margin: 15px 0px 35px 60px;
-  display: flex; /* Usar flexbox */
-  justify-content: center; /* Centra horizontalmente */
-  align-items: center; /* Centra verticalmente */
-  overflow: hidden; /* Recorta cualquier parte que sobresalga uwu*/
+
+.welcome-container {
+  text-align: center;
+}
+
+.welcome-container img {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+}
+.welcome-container {
+  text-align: center;
+  margin: 20px;
+}
+
+.welcome-container img {
+  width: 150px;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 10px;
 }
 
 ion-img {
