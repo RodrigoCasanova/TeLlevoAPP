@@ -6,7 +6,6 @@ ion-card {
   margin: 20px auto;
   max-width: 400px;
   border-radius: 15px;
-  background: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -31,10 +30,6 @@ ion-label {
 
 ion-buttons {
   margin-left: auto;
-}
-/* Fondo azul para toda la página */
-ion-content {
-  --background: #e3f2fd; /* Color de fondo azul claro */
 }
 
 /* Estilos adicionales para el contenedor y la tarjeta */

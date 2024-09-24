@@ -1,9 +1,4 @@
-/* Fondo azul para toda la página */
-ion-content {
-    --background: #e3f2fd; /* Color de fondo azul claro */
-  }
-  
-  /* Otros estilos... */
+    /* Otros estilos... */
   .text-center {
     text-align: center;
   }
@@ -28,13 +23,8 @@ ion-content {
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
-    background: #ffffff;
+
   }
-  
-  ion-card {
-    background: #ffffff;
-  }
-  
   ion-button {
     --border-radius: 20px;
   }

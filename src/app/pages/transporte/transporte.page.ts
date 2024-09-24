@@ -50,7 +50,7 @@ export class TransportePage implements OnInit {
       driverImage: 'assets/img/mati.jpeg',
       destination: 'Duoc UC Concepción',
       uwu: 4,
-      departureTime: '20:00',
+      departureTime: '22:00',
       costPerKm: 240,
       location: 'Chiguayante',
     },
