@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Menú Conductor</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Opciones del Conductor</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <!-- Botón Agregar Viaje -->
+        <ion-item button (click)="addRide()">
+          <ion-icon slot="start" name="add-circle"></ion-icon>
+          Agregar Viaje
+        </ion-item>
+        <!-- Botón Ver Viaje -->
+        <ion-item button (click)="viewRide()">
+          <ion-icon slot="start" name="eye"></ion-icon>
+          Ver Viaje
+        </ion-item>
+        <!-- Botón Historial de Viajes -->
+        <ion-item button (click)="viewRideHistory()">
+          <ion-icon slot="start" name="time"></ion-icon>
+          Historial de Viajes
+        </ion-item>
+        <!-- Botón Ruta de Viaje con icono de carretera -->
+        <ion-item button (click)="viewRideRute()">
+          <ion-icon slot="start" name="car"></ion-icon> 
+          Ruta de Viaje
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

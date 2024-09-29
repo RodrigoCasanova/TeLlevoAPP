@@ -1,32 +1,20 @@
-/* Estilos para el menú */
-ion-menu {
-  --width: 250px; /* Ajusta el ancho del menú según tu diseño */
+ion-button.action-button {
+  height: 60px; /* Altura deseada para los botones */
+  --background: var(--ion-color-primary); /* Color de fondo */
+  --color: white; /* Color del texto */
+  --border-radius: 10px; /* Bordes redondeados */
+  font-size: 16px; /* Tamaño de la fuente */
 }
 
-ion-content {
-  --padding-start: 0;
-  --padding-end: 0;
-}
-
-ion-footer {
+.profile-menu {
   position: absolute;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-}
-
-ion-button {
-  --border-radius: 8px; /* Ajusta el borde si es necesario */
-  --background: var(--ion-color-primary); /* Ajusta el color de fondo */
-  --color: #fff; /* Ajusta el color del texto */
-  margin-bottom: 10px; /* Espacio entre los botones */
-}
-
-ion-icon {
-  font-size: 24px; /* Ajusta el tamaño del icono */
-  margin-right: 10px;
+  top: 60px;
+  right: 10px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  z-index: 100;
 }
 
 .welcome-container {
@@ -34,47 +22,16 @@ ion-icon {
 }
 
 .welcome-container img {
-  max-width: 100%;
-  height: auto;
-  margin: 20px 0;
-}
-
-ion-card {
-  margin: 10px 0;
-}
-
-/* Fondo azul para toda la página */
-
-
-/* Estilos adicionales para el contenedor y la tarjeta */
-.welcome-container {
-  text-align: center;
-  margin: 20px;
-}
-
-.welcome-container img {
-  width: 150px;
-  height: auto;
-  margin-top: 20px;
-  border-radius: 10px;
-}
-
-ion-card {
+  max-width: 150px;
   margin: 20px auto;
-  max-width: 400px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
-ion-button {
-  --border-radius: 20px;
+.profile-menu {
+  position: absolute;
+  top: 60px; // Ajusta esto si es necesario
+  left: 10px; // Mueve el menú a la izquierda
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px; // Ajusta el ancho si es necesario
+  z-index: 100;
 }
-
-ion-item {
-  --border-radius: 10px;
-}
-
-ion-input {
-  --padding-start: 10px;
-}
-

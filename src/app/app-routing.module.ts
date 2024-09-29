@@ -68,7 +68,23 @@ const routes: Routes = [
   {
     path: 'chat',
     loadChildren: () => import('./pages/chat/chat.module').then( m => m.ChatPageModule)
+  },  {
+    path: 'menu-conductor',
+    loadChildren: () => import('./pages/menu-conductor/menu-conductor.module').then( m => m.MenuConductorPageModule)
   },
+  {
+    path: 'menu-pasajero',
+    loadChildren: () => import('./pages/menu-pasajero/menu-pasajero.module').then( m => m.MenuPasajeroPageModule)
+  },
+  {
+    path: 'historial-conductor',
+    loadChildren: () => import('./pages/historial-conductor/historial-conductor.module').then( m => m.HistorialConductorPageModule)
+  },
+  {
+    path: 'historial-pasajero',
+    loadChildren: () => import('./pages/historial-pasajero/historial-pasajero.module').then( m => m.HistorialPasajeroPageModule)
+  },
+
 
  
   

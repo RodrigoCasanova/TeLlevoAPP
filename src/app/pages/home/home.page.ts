@@ -1,66 +1,66 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
 })
 export class HomePage {
+  isLoggedIn = false; // Cambia a true cuando el usuario inicie sesión
+  showProfileMenu = false; // Controla la visibilidad del menú de perfil
   activeRide: any = null; // Ajusta el tipo según tu estructura de datos
 
-  constructor(
-    private navCtrl: NavController,
-    private alertController: AlertController
-  ) {}
+  constructor(private navCtrl: NavController) {}
 
+  // Mostrar u ocultar el menú de perfil
+  toggleProfileMenu() {
+    this.showProfileMenu = !this.showProfileMenu;
+  }
+
+  // Navegar a la página de inicio de sesión
   openLogin() {
     this.navCtrl.navigateForward('/login');
+    this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
   }
 
+  // Navegar a la página de registro
   openRegistro() {
     this.navCtrl.navigateForward('/registro');
+    this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
   }
 
+  // Navegar a la página de perfil
+  viewProfile() {
+    this.navCtrl.navigateForward('/perfil');
+    this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
+  }
+
+  // Lógica para cerrar sesión
+  logout() {
+    this.isLoggedIn = false; // Simulación de cierre de sesión
+    this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
+    console.log('Sesión cerrada');
+    // Aquí puedes agregar la lógica real de cierre de sesión si es necesario
+  }
+
+  // Lógica para registrar como conductor
   registerAsDriver() {
-    // Implementa la lógica para registrar al usuario como conductor
-    this.navCtrl.navigateForward('/menu_auto');
+    this.navCtrl.navigateForward('/menu-conductor');
   }
 
+  // Lógica para buscar transporte
   findRide() {
-    // Implementa la lógica para buscar transporte
-    this.navCtrl.navigateForward('/transporte');
+    this.navCtrl.navigateForward('/menu-pasajero');
   }
 
+  // Cancelar el viaje
   cancelRide() {
-    // Implementa la lógica para cancelar el viaje
     console.log('Viaje cancelado');
   }
 
-  async openViaje() {
-    const alert = await this.alertController.create({
-      header: 'Selecciona una opción',
-      message: 'Elige si eres conductor o pasajero.',
-      buttons: [
-        {
-          text: 'Conductor',
-          handler: () => {
-            this.navCtrl.navigateForward('/viaje-conductor'); // Navega a la página de conductor
-          }
-        },
-        {
-          text: 'Pasajero',
-          handler: () => {
-            this.navCtrl.navigateForward('/ruta-pasajero'); // Navega a la página de pasajero
-          }
-        },
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        }
-      ]
-    });
-
-    await alert.present();
+  // Navegar a la página del viaje
+  openViaje() {
+    this.navCtrl.navigateForward('/viaje');
   }
 }

@@ -1,38 +1,12 @@
 <ion-content>
-  <!-- Menú -->
-  <ion-menu contentId="main-content">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Menu</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content>
-      <ion-footer>
-        <!-- Botón de Inicio de sesión -->
-        <ion-button expand="full" (click)="openLogin()">
-          <ion-icon slot="start" name="log-in"></ion-icon>
-          Iniciar Sesión
-        </ion-button>
-
-        <!-- Botón de Registro -->
-        <ion-button expand="full" (click)="openRegistro()">
-          <ion-icon slot="start" name="person-add"></ion-icon>
-          Registrarse
-        </ion-button>
-        <ion-button expand="full" (click)="openViaje()">
-          <ion-icon slot="start" name="log-in"></ion-icon>
-          Ver viaje
-        </ion-button>
-      </ion-footer>
-    </ion-content>
-  </ion-menu>
 
   <!-- Contenido principal -->
   <div class="ion-page" id="main-content">
     <ion-header>
       <ion-toolbar>
-        <ion-button slot="end" [routerLink]="['/perfil']" color="mamhuevo" expand="full">
-          <ion-icon name="person-circle-outline" color="primary"></ion-icon>
+        <!-- Ícono de perfil con menú desplegable a la izquierda -->
+        <ion-button slot="start" fill="clear" (click)="toggleProfileMenu()">
+          <ion-icon name="person-circle-outline" size="large" color="primary"></ion-icon>
         </ion-button>
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
@@ -40,15 +14,36 @@
         <ion-title>TeLlevoAPP</ion-title>
       </ion-toolbar>
     </ion-header>
+
+    <!-- Menú de perfil desplegable a la izquierda -->
+    <div *ngIf="showProfileMenu" class="profile-menu">
+      <ion-list>
+        <ion-item *ngIf="!isLoggedIn" (click)="openLogin()">
+          <ion-icon slot="start" name="log-in"></ion-icon>
+          Iniciar Sesión
+        </ion-item>
+        <ion-item *ngIf="!isLoggedIn" (click)="openRegistro()">
+          <ion-icon slot="start" name="person-add"></ion-icon>
+          Registrarse
+        </ion-item>
+        <ion-item *ngIf="isLoggedIn" (click)="viewProfile()">
+          <ion-icon slot="start" name="person-circle"></ion-icon>
+          Ver Perfil
+        </ion-item>
+        <ion-item *ngIf="isLoggedIn" (click)="logout()">
+          <ion-icon slot="start" name="log-out"></ion-icon>
+          Cerrar Sesión
+        </ion-item>
+      </ion-list>
+    </div>
+
     <ion-content class="ion-padding">
-      <!-- Bienvenida y descripción -->
       <div class="welcome-container">
         <h2>Bienvenido a TeLlevoAPP</h2>
         <p>Organiza tu viaje de retorno a casa o busca transporte con otros compañeros de DUOC.</p>
         <img src="assets/img/logo2.0.png" alt="Bienvenida" />
       </div>
 
-      <!-- Sección de opciones -->
       <ion-card>
         <ion-card-header>
           <ion-card-title>¿Cómo quieres usar la app?</ion-card-title>
@@ -56,17 +51,14 @@
         <ion-card-content>
           <ion-grid>
             <ion-row>
-              <!-- Opción para quienes tienen vehículo -->
               <ion-col size="6">
-                <ion-button expand="block" (click)="registerAsDriver()">
-                  Tengo vehículo
+                <ion-button expand="block" color="primary" class="action-button" (click)="registerAsDriver()">
+                  <ion-icon slot="start" name="car"></ion-icon> Conductor
                 </ion-button>
               </ion-col>
-
-              <!-- Opción para quienes buscan transporte -->
               <ion-col size="6">
-                <ion-button expand="block" (click)="findRide()">
-                 Transporte
+                <ion-button expand="block" color="primary" class="action-button" (click)="findRide()">
+                  <ion-icon slot="start" name="people"></ion-icon> Pasajero
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -74,7 +66,7 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- Estado del viaje -->
+      <!-- Si el usuario tiene un viaje activo -->
       <ion-card *ngIf="activeRide">
         <ion-card-header>
           <ion-card-title>Tu viaje actual</ion-card-title>

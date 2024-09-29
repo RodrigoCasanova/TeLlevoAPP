@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Menú Pasajero</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Opciones del Pasajero</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <!-- Botón Agendar Viaje -->
+        <ion-item button (click)="scheduleRide()">
+          <ion-icon slot="start" name="calendar"></ion-icon>
+          Agendar Viaje
+        </ion-item>
+        <!-- Botón Ver Viaje -->
+        <!-- Botón Historial de Viajes -->
+        <ion-item button (click)="viewRideHistory()">
+          <ion-icon slot="start" name="time"></ion-icon>
+          Historial de Viajes
+        </ion-item>
+        <!-- Botón Ruta de Viaje -->
+        <ion-item button (click)="viewRideRute()">
+          <ion-icon slot="start" name="car"></ion-icon> <!-- Puedes cambiarlo por "road" si prefieres -->
+          Ruta de Viaje
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,25 @@
+ion-header {
+    
+    color: #fff; /* Color del texto */
+  }
+  
+  ion-card {
+    margin: 10px;
+    border-radius: 10px; /* Esquinas redondeadas */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra para darle profundidad */
+  }
+  
+  ion-list {
+    margin-top: 10px; /* Espaciado superior */
+  }
+  
+  ion-item {
+    --background: #f9f9f9; /* Color de fondo del ítem */
+    border-radius: 8px; /* Esquinas redondeadas en los ítems */
+    margin-bottom: 10px; /* Espaciado inferior entre ítems */
+  }
+  
+  ion-item:hover {
+    background: #e0e0e0; /* Color al pasar el mouse */
+  }
+  
