@@ -1,10 +1,7 @@
 <ion-content>
-
-  <!-- Contenido principal -->
   <div class="ion-page" id="main-content">
     <ion-header>
       <ion-toolbar>
-        <!-- Ícono de perfil con menú desplegable a la izquierda -->
         <ion-button slot="start" fill="clear" (click)="toggleProfileMenu()">
           <ion-icon name="person-circle-outline" size="large" color="primary"></ion-icon>
         </ion-button>
@@ -42,6 +39,10 @@
         <h2>Bienvenido a TeLlevoAPP</h2>
         <p>Organiza tu viaje de retorno a casa o busca transporte con otros compañeros de DUOC.</p>
         <img src="assets/img/logo2.0.png" alt="Bienvenida" />
+      </div>
+
+      <div *ngIf="isLoggedIn" class="ion-text-center">
+        <h3>Bienvenido, {{ currentUser.nombre }} {{ currentUser.apellido }}!</h3>
       </div>
 
       <ion-card>

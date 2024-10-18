@@ -1,44 +1,49 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button class="back-button" (click)="goBack()">
-        <ion-icon slot="start" name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="text-center">Registro</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title color="light" class="ion-text-center">
+      TeLlevoAPP
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-text color="secondary" class="ion-text-center">
+    <h1>Registro de Usuario</h1>
+  </ion-text>
+
   <div class="register-container">
-    <ion-img src="assets/img/login.png" class="register-image"></ion-img>
-    
     <ion-card class="register-card">
-      <ion-item>
-        <ion-label position="floating">Nombre</ion-label>
-        <ion-input type="text"></ion-input>
-      </ion-item>
-      
-      <ion-item>
-        <ion-label position="floating">Correo Electrónico</ion-label>
-        <ion-input type="email"></ion-input>
-      </ion-item>
-      
-      <ion-item>
-        <ion-label position="floating">Contraseña</ion-label>
-        <ion-input type="password"></ion-input>
-      </ion-item>
-      
-      <ion-item>
-        <ion-label position="floating">Confirmar Contraseña</ion-label>
-        <ion-input type="password"></ion-input>
-      </ion-item>
-      
-      <ion-button expand="block" class="ion-margin-top" color="primary" (click)="register()">Registrarse</ion-button>
-      
-      <div class="ion-text-center ion-margin-top">
-        <p>¿Ya tienes una cuenta? <a href="/login">Iniciar Sesión</a></p>
-      </div>
+      <ion-img src="assets/img/login.png" class="register-image"></ion-img>
+      <form #registroForm="ngForm" (ngSubmit)="registrar()">
+        <ion-item>
+          <ion-input required labelPlacement="floating" label="Usuario" name="username" type="text" [(ngModel)]="usr.username"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input required labelPlacement="floating" label="Contraseña" name="password" type="password" [(ngModel)]="usr.password"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input required labelPlacement="floating" label="Nombre" name="nombre" type="text" [(ngModel)]="usr.nombre"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input required labelPlacement="floating" label="Apellido" name="apellido" type="text" [(ngModel)]="usr.apellido"></ion-input>
+        </ion-item>
+
+        <!-- Nuevo campo para el correo -->
+        <ion-item>
+          <ion-input required labelPlacement="floating" label="Correo" name="correo" type="email" [(ngModel)]="usr.correo"></ion-input>
+        </ion-item>
+
+        <ion-button expand="full" color="primary" type="submit" [disabled]="registroForm.invalid" class="ion-padding">
+          <ion-text color="light">Registrarse</ion-text>
+        </ion-button>
+      </form>
     </ion-card>
   </div>
+
+  <ion-text color="tertiary" class="ion-text-center" routerLink="/login">
+    <p>Volver a login</p>
+  </ion-text>
 </ion-content>

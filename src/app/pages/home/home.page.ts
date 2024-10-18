@@ -10,8 +10,20 @@ export class HomePage {
   isLoggedIn = false; // Cambia a true cuando el usuario inicie sesión
   showProfileMenu = false; // Controla la visibilidad del menú de perfil
   activeRide: any = null; // Ajusta el tipo según tu estructura de datos
+  currentUser: any = null; // Almacena los datos del usuario actual
 
-  constructor(private navCtrl: NavController) {}
+  constructor(private navCtrl: NavController) { }
+
+  ngOnInit() {
+    this.checkLoginStatus();
+  }
+
+  checkLoginStatus() {
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (this.isLoggedIn) {
+      this.currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    }
+  }
 
   // Mostrar u ocultar el menú de perfil
   toggleProfileMenu() {
@@ -37,12 +49,17 @@ export class HomePage {
   }
 
   // Lógica para cerrar sesión
+  // Lógica para cerrar sesión
   logout() {
-    this.isLoggedIn = false; // Simulación de cierre de sesión
+    localStorage.removeItem('isLoggedIn'); // Elimina el estado de inicio de sesión
+    localStorage.removeItem('currentUser'); // Elimina los datos del usuario
+    this.isLoggedIn = false; // Actualiza el estado
+    this.currentUser = null; // Limpia los datos del usuario
     this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
     console.log('Sesión cerrada');
-    // Aquí puedes agregar la lógica real de cierre de sesión si es necesario
+    this.navCtrl.navigateRoot('/login'); // Redirige al usuario a la página de inicio de sesión
   }
+
 
   // Lógica para registrar como conductor
   registerAsDriver() {

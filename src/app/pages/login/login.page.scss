@@ -1,50 +1,52 @@
-    /* Otros estilos... */
-  .text-center {
-    text-align: center;
-  }
-  
-  .login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .login-image {
-    width: 150px;
-    height: 150px;
-    margin: 20px auto;
-    border-radius: 50%;
-  }
-  
-  .login-card {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-  }
-  
-  
-  ion-button {
-    --border-radius: 20px;
-  }
-  
-  ion-item {
-    --border-radius: 10px;
-  }
-  
-  ion-input {
-    --padding-start: 10px;
-  }
-  
-  p {
-    font-size: 0.9em;
-    color: #555;
-  }
-  
-  a {
-    color: #3880ff;
-    text-decoration: none;
-  }
-  
+.login-content {
+  --background: linear-gradient(to bottom, #ffffff, #ffffff);
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.login-image {
+  width: 120px;
+  height: 120px;
+  margin: 30px auto;
+  border-radius: 50%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-item {
+  --background: white;
+  --border-radius: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+ion-input {
+  --padding-start: 15px;
+  --padding-end: 15px;
+  color: #333;
+}
+
+.login-button {
+  --border-radius: 25px;
+  font-size: 1.1em;
+  --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.link-text {
+  margin-top: 20px;
+  font-size: 1em;
+}
+
+ion-text p {
+  color: #3880ff;
+}
+
+ion-text a {
+  text-decoration: none;
+  font-weight: bold;
+}
