@@ -1,38 +1,50 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
+import { LocaldbService } from 'src/app/services/localdb.service';
 
 @Component({
   selector: 'app-menu-auto',
   templateUrl: './menu-auto.page.html',
   styleUrls: ['./menu-auto.page.scss'],
 })
-export class MenuAutoPage {
-  cars = [
-    { make: 'Toyota', model: 'Corolla', year: 2020, color: 'Blanco', licensePlate: 'ABC123', selected: false },
-    // Agrega más autos según sea necesario
-  ];
-
+export class MenuAutoPage implements OnInit {
+  cars: any[] = []; // Inicializamos el array vacío
   selectedCar: any;
 
   constructor(
     private navCtrl: NavController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private localdb: LocaldbService // Inyectamos el servicio
   ) {}
 
+  ngOnInit() {
+    this.loadCars(); // Cargar autos al iniciar
+  }
+  
+  async loadCars() {
+    const storedCars = await this.localdb.obtener('carList') || [];
+    if (!Array.isArray(storedCars)) {
+      console.error('Los autos guardados no son un array');
+      this.cars = []; // Reinicia la lista si no es un array
+    } else {
+      this.cars = storedCars;
+    }
+    console.log('Autos cargados:', this.cars); // Verifica que se estén cargando
+  }
+
   addCar() {
-    // Lógica para agregar un auto
-    this.navCtrl.navigateForward('/auto');
+    this.navCtrl.navigateForward('/auto'); // Navegar a la página de agregar auto
   }
 
   editCar(car: any) {
-    // Lógica para editar un auto
     console.log('Editar auto', car);
+    // Implementar la lógica para editar el auto
   }
 
   async confirmDelete(car: any) {
     const alert = await this.alertController.create({
       header: 'Confirmación',
-      message: `¿Estás seguro que quieres eliminar el auto ${car.make} ${car.model}?`,
+      message: `¿Estás seguro que quieres eliminar el auto ${car.brand} ${car.model}?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -54,10 +66,12 @@ export class MenuAutoPage {
     await alert.present();
   }
 
-  deleteCar(car: any) {
-    // Lógica para eliminar el auto
+  async deleteCar(car: any) {
     console.log('Eliminar auto', car);
     this.cars = this.cars.filter(c => c !== car);
+    
+    // Guardar la nueva lista en el storage
+    await this.localdb.guardar('carList', this.cars);
     this.selectedCar = null; // Resetear selección después de eliminar
   }
 
@@ -65,14 +79,16 @@ export class MenuAutoPage {
     if (this.selectedCar) {
       this.navCtrl.navigateForward('/conductor');
       console.log('Ofrecer transporte para el auto seleccionado', this.selectedCar);
-      // Aquí puedes redirigir a la página de oferta de transporte o realizar cualquier otra acción
     }
   }
 
   updateSelectedCar(car: any) {
     this.selectedCar = this.cars.find(c => c.selected);
   }
+
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.back(); // Simplemente regresa a la página anterior
+    this.loadCars(); // Cargar autos cada vez que se regrese
   }
+  
 }

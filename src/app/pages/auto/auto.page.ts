@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { LocaldbService } from 'src/app/services/localdb.service';
 
 @Component({
   selector: 'app-auto',
@@ -32,30 +33,43 @@ export class AutoPage {
   };
 
   models: string[] = [];
-
-  // Lista de años desde 1990 hasta el año actual
   years: string[] = Array.from({ length: new Date().getFullYear() - 1989 }, (_, i) => (1990 + i).toString());
 
-  // Lista de colores
-  colors: string[] = ['Blanco', 'Negro', 'Gris', 'Rojo', 'Azul', 'Verde', 'Amarillo', 'Otro'];
+  constructor(private navCtrl: NavController, private localdb: LocaldbService) {}
 
-  constructor(private navCtrl: NavController) {}
-
-  // Actualiza la lista de modelos cuando se selecciona una marca
   updateModels(event: any) {
     const selectedBrand = event.detail.value;
     this.models = this.brandModels[selectedBrand] || [];
   }
 
   saveCar() {
-    if (this.car.model === 'otro') {
-      // Si se selecciona "Otro", podrías agregar una lógica para pedir el modelo personalizado al usuario
-      console.log('Modelo personalizado:', this.car.model);
+    if (this.car.brand && this.car.model && this.car.year && this.car.color && this.car.plate) {
+      const newCar = {
+        brand: this.car.brand,
+        model: this.car.model,
+        year: this.car.year,
+        color: this.car.color,
+        plate: this.car.plate,
+        description: this.car.description,
+      };
+  
+      this.localdb.obtener('carList').then(storedCars => {
+        const cars = storedCars || [];
+        cars.push(newCar); // Agrega el nuevo auto a la lista
+        this.localdb.guardar('carList', cars).then(() => {
+          console.log('Auto guardado:', newCar);
+          this.navCtrl.back(); // Regresa a la página anterior
+          // Aquí llamas a loadCars si es necesario, o puedes emitir un evento
+        });
+      });
+    } else {
+      console.error('Todos los campos son requeridos');
     }
-    console.log('Detalles del auto guardados:', this.car);
   }
+  
+  
 
   goBack() {
-    this.navCtrl.back(); // Regresar a la página anterior
+    this.navCtrl.back();
   }
 }

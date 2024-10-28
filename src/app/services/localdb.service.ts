@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class LocaldbService {
   private _storage: Storage | null = null;
+
   constructor(private storage: Storage) {
     this.init();
   }
 
   async init() {
-    // If using, define drivers here: await this.storage.defineDriver(/*...*/);
-    const storage = await this.storage.create();
-    this._storage = storage;
+    this._storage = await this.storage.create();
   }
 
-  public guardar(key: string, value: any) {
-    this._storage?.set(key, value);
+  public async guardar(key: string, value: any) {
+    await this.ensureInitialized();
+    return this._storage?.set(key, value);
   }
 
   public async obtener(key: string) {
-    const valor = await this._storage?.get(key);
-    return valor;
+    await this.ensureInitialized();
+    return this._storage?.get(key);
+  }
+
+  private async ensureInitialized() {
+    if (!this._storage) {
+      this._storage = await this.storage.create();
+    }
   }
 }

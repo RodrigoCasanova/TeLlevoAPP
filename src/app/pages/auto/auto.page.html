@@ -19,7 +19,7 @@
         <!-- Marca del Auto -->
         <ion-item>
           <ion-label>Marca</ion-label>
-          <ion-select [(ngModel)]="car.brand" (ionChange)="updateModels($event)" placeholder="Selecciona una marca">
+          <ion-select id="brandSelect" [(ngModel)]="car.brand" (ionChange)="updateModels($event)" placeholder="Selecciona una marca">
             <ion-select-option value="toyota">Toyota</ion-select-option>
             <ion-select-option value="nissan">Nissan</ion-select-option>
             <ion-select-option value="hyundai">Hyundai</ion-select-option>
@@ -33,28 +33,25 @@
             <ion-select-option value="otro">Otro</ion-select-option>
           </ion-select>
         </ion-item>
-
-        <!-- Modelo del Auto -->
+        
         <ion-item>
           <ion-label>Modelo</ion-label>
-          <ion-select [(ngModel)]="car.model" placeholder="Selecciona un modelo">
+          <ion-select id="modelSelect" [(ngModel)]="car.model" placeholder="Selecciona un modelo">
             <ion-select-option *ngFor="let model of models" [value]="model">{{ model }}</ion-select-option>
             <ion-select-option value="otro">Otro</ion-select-option>
           </ion-select>
         </ion-item>
-
-        <!-- Año del Auto -->
+        
         <ion-item>
-          <ion-label >Año</ion-label>
-          <ion-select [(ngModel)]="car.year" placeholder="Selecciona un año">
+          <ion-label>Año</ion-label>
+          <ion-select id="yearSelect" [(ngModel)]="car.year" placeholder="Selecciona un año">
             <ion-select-option *ngFor="let year of years" [value]="year">{{ year }}</ion-select-option>
           </ion-select>
         </ion-item>
-
-        <!-- Color del Auto -->
+        
         <ion-item>
           <ion-label>Color</ion-label>
-          <ion-select [(ngModel)]="car.color" placeholder="Selecciona un color">
+          <ion-select id="colorSelect" [(ngModel)]="car.color" placeholder="Selecciona un color">
             <ion-select-option value="blanco">Blanco</ion-select-option>
             <ion-select-option value="negro">Negro</ion-select-option>
             <ion-select-option value="gris">Gris</ion-select-option>
@@ -65,18 +62,17 @@
             <ion-select-option value="otro">Otro</ion-select-option>
           </ion-select>
         </ion-item>
-
-        <!-- Patente del Auto -->
+        
         <ion-item>
-          <ion-label >Patente</ion-label>
-          <ion-input [(ngModel)]="car.plate" placeholder="Ej: ABC1234" type="text"></ion-input>
+          <ion-label>Patente</ion-label>
+          <ion-input id="plateInput" [(ngModel)]="car.plate" placeholder="Ej: ABC1234" type="text"></ion-input>
         </ion-item>
-
-        <!-- Descripción -->
+        
         <ion-item>
           <ion-label>Descripción</ion-label>
-          <ion-textarea [(ngModel)]="car.description"></ion-textarea>
+          <ion-textarea id="descriptionTextarea" [(ngModel)]="car.description"></ion-textarea>
         </ion-item>
+        
 
         <ion-button expand="block" color="primary" (click)="saveCar()">Guardar Auto</ion-button>
       </ion-card-content>
