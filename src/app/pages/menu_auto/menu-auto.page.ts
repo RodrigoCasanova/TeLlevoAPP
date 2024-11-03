@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { LocaldbService } from 'src/app/services/localdb.service';
 
@@ -7,7 +7,7 @@ import { LocaldbService } from 'src/app/services/localdb.service';
   templateUrl: './menu-auto.page.html',
   styleUrls: ['./menu-auto.page.scss'],
 })
-export class MenuAutoPage implements OnInit {
+export class MenuAutoPage {
   cars: any[] = []; // Inicializamos el array vacío
   selectedCar: any;
 
@@ -17,8 +17,8 @@ export class MenuAutoPage implements OnInit {
     private localdb: LocaldbService // Inyectamos el servicio
   ) {}
 
-  ngOnInit() {
-    this.loadCars(); // Cargar autos al iniciar
+  ionViewWillEnter() {
+    this.loadCars(); // Cargar autos cada vez que la página se muestra
   }
   
   async loadCars() {
@@ -88,7 +88,5 @@ export class MenuAutoPage implements OnInit {
 
   goBack() {
     this.navCtrl.back(); // Simplemente regresa a la página anterior
-    this.loadCars(); // Cargar autos cada vez que se regrese
   }
-  
 }
