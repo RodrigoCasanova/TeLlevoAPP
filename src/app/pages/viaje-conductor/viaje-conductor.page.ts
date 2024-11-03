@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-viaje-conductor',
   templateUrl: './viaje-conductor.page.html',
   styleUrls: ['./viaje-conductor.page.scss'],
 })
-export class ViajeConductorPage {
+export class ViajeConductorPage implements OnInit {
   ride: any = {
-    startLocation: 'Duoc UC Concepción',
-    destination: 'Penco',
-    departureTime: '18:30',
-    costPerKm: 1500,
+    startLocation: '',
+    destination: '',
+    departureTime: '',
+    costPerKm: 0,
   };
 
   passengers: any[] = [
@@ -37,8 +38,18 @@ export class ViajeConductorPage {
 
   constructor(
     private navCtrl: NavController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.ride.startLocation = params["destination"] || 'Duoc UC Concepcion';
+      this.ride.destination = params["location"] ;
+      this.ride.departureTime = params["startDateTime"];
+      this.ride.costPerKm = params["cost"];
+    });
+  }
 
   goBack() {
     this.navCtrl.back();
@@ -53,7 +64,6 @@ export class ViajeConductorPage {
   }
 
   canScheduleTrip(): boolean {
-    // Check if every passenger's status is either "Confirmado" or "Cancelado"
     return this.passengers.every(passenger => passenger.status === 'Confirmado' || passenger.status === 'Cancelado');
   }
 
@@ -69,13 +79,15 @@ export class ViajeConductorPage {
         {
           text: 'Confirmar',
           handler: () => {
-            // Navigate to the next page or handle scheduling logic
-            this.navCtrl.navigateForward('/ruta-conductor'); // Cambia '/some-other-page' por la ruta deseada
+            // Pasar solo el destino como parámetro de la ruta
+            this.navCtrl.navigateForward('/ruta-conductor', {
+              queryParams: { location: this.ride.destination }
+            });
           },
         },
       ],
     });
-
+  
     await alert.present();
   }
-}
+}  

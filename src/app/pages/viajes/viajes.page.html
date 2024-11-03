@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-button" (click)="goBack()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Mis Viajes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item-group *ngFor="let trip of tripsByDate">
+      <ion-item-divider>
+        <ion-label>{{ trip.date | date:'longDate' }}</ion-label>
+      </ion-item-divider>
+      <ion-item *ngFor="let event of trip.events" (click)="eventClicked(event)">
+        <ion-label>
+          <h2>Viaje a {{ event.tripData.location }}</h2>
+          <p>Fecha y Hora: {{ event.start | date:'short' }}</p>
+          <p>Asientos: {{ event.tripData.seats }}</p>
+          <p>Costo: {{ event.tripData.cost }} {{ event.tripData.costType === 'perKm' ? 'por Kilómetro' : 'Fijo' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+</ion-content>

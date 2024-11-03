@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LocaldbService } from 'src/app/services/localdb.service';
 import { NavController, AlertController } from '@ionic/angular';
 
 @Component({
@@ -7,20 +8,25 @@ import { NavController, AlertController } from '@ionic/angular';
   styleUrls: ['./conductor.page.scss'],
 })
 export class ConductorPage {
-  startDateTime: string = new Date().toISOString();
+  // Variables para el viaje
   selectedLocation: string = '';
-  seats: number = 1;
-  cost: number = 500;  // Costo inicial (puede ser fijo o por kilómetro)
-  costType: 'perKm' | 'fixed' = 'fixed';  // Tipo de costo
+  startDateTime: string = new Date().toISOString(); // Inicializa con la fecha y hora actual
+  seats: number = 1; // Número de asientos inicial
+  cost: number = 500;  // Costo inicial
+  costType: 'fixed' | 'perKm' = 'fixed';  // Tipo de costo inicial
 
-  constructor(private navCtrl: NavController, private alertController: AlertController) {}
+  constructor(
+    private localDbService: LocaldbService, 
+    private navCtrl: NavController,
+    private alertController: AlertController
+  ) {}
 
   // Método para regresar a la página anterior
   goBack() {
     this.navCtrl.back();
   }
 
-  // Método para validar los datos antes de ofrecer transporte
+  // Método para validar los campos antes de ofrecer transporte
   async validateFields(): Promise<boolean> {
     if (!this.selectedLocation || !this.startDateTime || this.seats <= 0 || this.cost <= 0) {
       const errorAlert = await this.alertController.create({
@@ -31,72 +37,45 @@ export class ConductorPage {
       await errorAlert.present();
       return false;
     }
-    return true;
+    return true; // Todos los campos son válidos
   }
 
-  // Método para validar la fecha seleccionada
-  async validateDate() {
-    const selectedDate = new Date(this.startDateTime);
-    const dayOfWeek = selectedDate.getDay(); // 0 = Domingo, 6 = Sábado
-
-    if (dayOfWeek === 0) { // Si es domingo
-      const alert = await this.alertController.create({
-        header: 'Fecha inválida',
-        message: 'No puedes seleccionar domingos.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      
-      // Restablecer el campo de fecha
-      this.startDateTime = '';
-    }
-  }
-
+  // Método para ofrecer transporte
   async offerTransport() {
-    // Validar que los campos sean correctos antes de proceder
     const isValid = await this.validateFields();
     if (!isValid) return;
 
-    // Validar la fecha seleccionada
-    await this.validateDate();
+    const tripData = {
+        location: this.selectedLocation,
+        startDateTime: this.startDateTime,
+        seats: this.seats,
+        cost: this.cost,
+        costType: this.costType,
+    };
 
-    // Mostrar alerta de confirmación
-    const confirmationAlert = await this.alertController.create({
-      header: 'Confirmar',
-      message: `¿Estás seguro de ofrecer transporte con los siguientes detalles?
-                Ubicación: ${this.selectedLocation}
-                Fecha y Hora: ${this.startDateTime}
-                Número de Asientos: ${this.seats}
-                Costo: ${this.cost} ${this.costType === 'perKm' ? 'por Kilómetro' : 'Fijo'}`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: 'Confirmar',
-          handler: async () => {
-            // Mostrar la alerta de éxito
-            const successAlert = await this.alertController.create({
-              header: 'Éxito',
-              message: 'Tu transporte fue ofrecido con éxito.',
-              buttons: [
-                {
-                  text: 'Ir al Home',
-                  handler: () => {
-                    this.navCtrl.navigateRoot('/home'); // Cambia '/home' por la ruta de tu página de inicio
-                  }
+    let savedTrips = await this.localDbService.obtener('transportData');
+    if (!Array.isArray(savedTrips)) {
+        savedTrips = [];
+    }
+
+    savedTrips.push(tripData);
+    await this.localDbService.guardar('transportData', savedTrips);
+
+    console.log('Viajes guardados:', savedTrips); // Log para verificar los viajes guardados
+
+    const successAlert = await this.alertController.create({
+        header: 'Éxito',
+        message: 'Tu transporte fue ofrecido con éxito.',
+        buttons: [
+            {
+                text: 'Ir a Mis Viajes',
+                handler: () => {
+                    this.navCtrl.navigateForward('/viajes');
                 }
-              ]
-            });
-
-            await successAlert.present();
-          },
-        },
-      ],
+            }
+        ]
     });
 
-    await confirmationAlert.present();
-  }
+    await successAlert.present();
+}
 }

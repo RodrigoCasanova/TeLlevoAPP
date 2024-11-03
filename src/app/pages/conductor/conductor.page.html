@@ -38,13 +38,9 @@
             pickerFormat="DD/MM/YYYY HH:mm"
             min="2024-09-16T06:00"
             max="2024-12-31T23:59"
-            [(ngModel)]="startDateTime"
-            (ionChange)="validateDate()">
+            [(ngModel)]="startDateTime">
           </ion-datetime>
         </ion-item>
-        
-        
-        
 
         <!-- Número de Asientos -->
         <ion-item>
@@ -56,8 +52,6 @@
             <ion-select-option value="4">4</ion-select-option>
           </ion-select>
         </ion-item>
-
-        <!-- Tipo de Costo -->
 
         <!-- Costo por Persona -->
         <ion-item *ngIf="costType === 'fixed'">

@@ -17,7 +17,7 @@ export class MenuConductorPage {
 
   viewRide() {
     // Lógica para ver el viaje actual
-    this.navCtrl.navigateForward('/viaje-conductor'); // Asegúrate de tener la ruta configurada
+    this.navCtrl.navigateForward('/viajes'); // Asegúrate de tener la ruta configurada
   }
 
   viewRideHistory() {

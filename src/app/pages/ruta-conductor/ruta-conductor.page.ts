@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 declare var google: any;
 
@@ -10,11 +10,10 @@ declare var google: any;
   styleUrls: ['./ruta-conductor.page.scss'],
 })
 export class RutaConductorPage implements OnInit {
-  ride = {
-    destination: 'Penco', // Este valor puede cambiar según la selección del usuario
+  ride: any = {
+    destination: '', // Se llenará con el parámetro de la ruta
   };
 
-  // Coordenadas de inicio actualizadas
   startPosition = { lat: -36.79448680693151, lng: -73.06436871720969 }; // Nueva posición de inicio
   endPosition: any;
 
@@ -24,23 +23,20 @@ export class RutaConductorPage implements OnInit {
   searchQuery: string = '';
   suggestions: string[] = [];
 
-  constructor(private navCtrl: NavController, private router: Router) {}
+  constructor(private navCtrl: NavController, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
+    // Obtener parámetros de consulta
+    this.route.queryParams.subscribe(params => {
+      this.ride.destination = params['location']; // Asignar el destino desde los parámetros
+      this.updateDestinationCoordinates(this.ride.destination); // Actualiza las coordenadas del destino
+    });
+    
     this.initMap(); // Inicializa el mapa
-    this.updateDestinationCoordinates(this.ride.destination); // Inicializa con destino por defecto
   }
-
+  
   goBack() {
     this.navCtrl.back();
-  }
-
-  goHome() {
-    this.navCtrl.navigateRoot('/home');
-  }
-
-  navigateToChat() {
-    this.router.navigate(['/chat']);
   }
 
   initMap() {
@@ -59,7 +55,9 @@ export class RutaConductorPage implements OnInit {
     });
     this.directionsRenderer.setMap(this.map);
 
-    this.calculateAndDisplayRoute(); // Dibuja la ruta inicial
+    if (this.endPosition) {
+      this.placeMarkers(); // Coloca los marcadores si hay una posición de destino
+    }
   }
 
   calculateAndDisplayRoute() {
@@ -89,11 +87,13 @@ export class RutaConductorPage implements OnInit {
       title: 'Inicio (Ubicación Fija)',
     });
 
-    new google.maps.Marker({
-      position: this.endPosition,
-      map: this.map,
-      title: 'Destino: ' + this.ride.destination,
-    });
+    if (this.endPosition) {
+      new google.maps.Marker({
+        position: this.endPosition,
+        map: this.map,
+        title: 'Destino: ' + this.ride.destination,
+      });
+    }
   }
 
   onSearchChange() {
@@ -123,9 +123,18 @@ export class RutaConductorPage implements OnInit {
       if (status === google.maps.GeocoderStatus.OK && results[0]) {
         this.endPosition = results[0].geometry.location; // Obtiene la ubicación del destino
         this.calculateAndDisplayRoute(); // Calcula la ruta a la nueva ubicación
+        this.placeMarkers(); // Coloca el marcador del nuevo destino
       } else {
         window.alert('No se pudo encontrar el destino: ' + status);
       }
     });
+  }
+
+  navigateToChat() {
+    this.router.navigate(['/chat']); // Cambia '/chat' a la ruta correspondiente de tu página de chat
+  }
+
+  goHome() {
+    this.navCtrl.navigateRoot('/home'); // Cambia '/home' a la ruta correspondiente de tu página de inicio
   }
 }

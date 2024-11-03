@@ -84,7 +84,11 @@ const routes: Routes = [
   {
     path: 'historial-pasajero',
     loadChildren: () => import('./pages/historial-pasajero/historial-pasajero.module').then( m => m.HistorialPasajeroPageModule)
+  },  {
+    path: 'viajes',
+    loadChildren: () => import('./pages/viajes/viajes.module').then( m => m.ViajesPageModule)
   },
+
 
 
 
