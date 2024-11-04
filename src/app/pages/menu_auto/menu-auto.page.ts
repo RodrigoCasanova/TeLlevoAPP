@@ -75,10 +75,24 @@ export class MenuAutoPage {
     this.selectedCar = null; // Resetear selección después de eliminar
   }
 
-  offerTransport() {
+  async offerTransport() {
     if (this.selectedCar) {
+      // Guardar el auto seleccionado para ofrecer transporte
+      const carData = {
+        brand: this.selectedCar.brand,
+        model: this.selectedCar.model,
+        color: this.selectedCar.color,
+        plate: this.selectedCar.plate,
+      };
+
+      // Guardar los datos del auto en el LocaldbService
+      await this.localdb.guardar('selectedCar', carData);
+      
+      // Navegar a la página del conductor
       this.navCtrl.navigateForward('/conductor');
-      console.log('Ofrecer transporte para el auto seleccionado', this.selectedCar);
+      console.log('Ofrecer transporte para el auto seleccionado', carData);
+    } else {
+      console.error('No hay auto seleccionado para ofrecer transporte.');
     }
   }
 

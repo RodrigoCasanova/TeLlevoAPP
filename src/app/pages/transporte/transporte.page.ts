@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LocaldbService } from 'src/app/services/localdb.service';
 import { NavController, AlertController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-transporte',
@@ -11,11 +12,18 @@ export class TransportePage implements OnInit {
   selectedLocation: string = 'all';
   rides: any[] = [];
   filteredRides: any[] = [];
+  
+  // Propiedades para almacenar la información del auto
+  carBrand: string = '';
+  carModel: string = '';
+  carColor: string = '';
+  carPlate: string = '';
 
   constructor(
     private navCtrl: NavController,
     private localDbService: LocaldbService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private route: ActivatedRoute // Asegúrate de tener esto
   ) {}
 
   async ngOnInit() {
@@ -24,6 +32,23 @@ export class TransportePage implements OnInit {
     if (savedTrips) {
       this.rides = savedTrips; // Asigna los viajes a la variable rides
       this.filterRides(); // Filtra los viajes
+    }
+
+    // Obtener los parámetros de la URL (opcional, si se están pasando datos de la navegación)
+    this.route.queryParams.subscribe(params => {
+      this.carBrand = params['brand'] || '';
+      this.carModel = params['model'] || '';
+      this.carColor = params['color'] || '';
+      this.carPlate = params['plate'] || '';
+    });
+
+    // Cargar los datos del auto guardados
+    const savedCar = await this.localDbService.obtener('selectedCar');
+    if (savedCar) {
+      this.carBrand = savedCar.brand || '';
+      this.carModel = savedCar.model || '';
+      this.carColor = savedCar.color || '';
+      this.carPlate = savedCar.plate || '';
     }
   }
 

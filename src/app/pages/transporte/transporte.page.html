@@ -10,6 +10,15 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <!-- Detalles del Auto -->
+  <div>
+    <h2>Detalles del Auto</h2>
+    <p>Marca: {{ carBrand }}</p>
+    <p>Modelo: {{ carModel }}</p>
+    <p>Color: {{ carColor }}</p>
+    <p>Patente: {{ carPlate }}</p>
+  </div>
+  
   <!-- Filtro de ubicación -->
   <ion-item>
     <ion-label>Buscar en:</ion-label>
@@ -31,8 +40,8 @@
         <h2>{{ ride.driverName || 'Conductor Anónimo' }}</h2>
         <p>Ubicación: {{ ride.location }}</p>
         <p>Destino: {{ ride.destination }}</p>
-        <p>Auto: {{ ride.brand }} {{ ride.model }} ({{ ride.color }})</p>
-        <p>Patente: {{ ride.plate }}</p>
+        <p>Auto: {{ carBrand }} {{ carModel }} ({{ carColor }})</p>
+        <p>Patente: {{ carPlate }}</p>
         <p>Asientos disponibles: {{ ride.seats }}</p>
         <p>Fecha y Hora: {{ ride.startDateTime | date: 'dd/MM/yyyy HH:mm' }}</p>
         <p>Costo: {{ ride.cost }} {{ ride.costType === 'perKm' ? 'CLP/km' : 'CLP' }}</p>
