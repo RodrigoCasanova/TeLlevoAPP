@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LocaldbService } from 'src/app/services/localdb.service';
 import { NavController, AlertController } from '@ionic/angular';
 
 @Component({
@@ -8,73 +9,32 @@ import { NavController, AlertController } from '@ionic/angular';
 })
 export class TransportePage implements OnInit {
   selectedLocation: string = 'all';
-  rides: any[] = [
-    {
-      driverName: 'Jose Paillan',
-      driverImage: 'assets/img/paillan.jpeg',
-      destination: 'Duoc UC Concepción',
-      uwu: 3,
-      departureTime: '13:00',
-      costPerKm: 200,
-      location: 'penco',
-    },
-    {
-      driverName: 'Jose Vasquez',
-      driverImage: 'assets/img/jose.jpeg',
-      destination: 'Duoc UC Concepción',
-      uwu: 1,
-      departureTime: '18:30',
-      costPerKm: 250,
-      location: 'San Pedro',
-    },
-    {
-      driverName: 'Luis ilufin',
-      driverImage: 'assets/img/Luis.jpeg',
-      destination: 'Duoc UC Concepción',
-      uwu: 2,
-      departureTime: '15:30',
-      costPerKm: 220,
-      location: 'talcahuano',
-    },
-    {
-      driverName: 'Carlos Cartes',
-      driverImage: 'assets/img/carlos.jpeg',
-      destination: 'Duoc UC Concepción',
-      uwu: 0,
-      departureTime: '19:30',
-      costPerKm: 230,
-      location: 'Penco',
-    },
-    {
-      driverName: 'Matias Gonzalez',
-      driverImage: 'assets/img/mati.jpeg',
-      destination: 'Duoc UC Concepción',
-      uwu: 4,
-      departureTime: '22:00',
-      costPerKm: 240,
-      location: 'Chiguayante',
-    },
-  ];
+  rides: any[] = [];
   filteredRides: any[] = [];
 
-  constructor(private navCtrl: NavController, private alertController: AlertController) {}
+  constructor(
+    private navCtrl: NavController,
+    private localDbService: LocaldbService,
+    private alertController: AlertController
+  ) {}
 
-  ngOnInit() {
-    this.filterRides();
+  async ngOnInit() {
+    // Cargar los viajes ofrecidos al inicializar la página
+    const savedTrips = await this.localDbService.obtener('transportData');
+    if (savedTrips) {
+      this.rides = savedTrips; // Asigna los viajes a la variable rides
+      this.filterRides(); // Filtra los viajes
+    }
   }
 
   filterRides() {
     const now = new Date();
     const filtered = this.rides.filter(ride => {
-      const rideTime = new Date();
-      const [hours, minutes] = ride.departureTime.split(':').map(Number);
-      rideTime.setHours(hours, minutes);
-  
+      const rideTime = new Date(ride.startDateTime); // Usamos el tiempo de inicio del viaje
       return (
         (this.selectedLocation === 'all' || ride.location.toLowerCase() === this.selectedLocation.toLowerCase()) &&
-        rideTime >= now &&
-        ride.destination === 'Duoc UC Concepción' &&
-        ride.uwu > 0 // Asegúrate de que haya asientos disponibles
+        rideTime >= now && // Verifica que la hora del viaje no haya pasado
+        ride.seats > 0 // Verifica que haya asientos disponibles
       );
     });
     this.filteredRides = filtered;
@@ -93,7 +53,7 @@ export class TransportePage implements OnInit {
         {
           text: 'Aceptar',
           handler: async () => {
-            // Mostrar la segunda alerta después de la confirmación
+            // Lógica para manejar la solicitud del viaje
             const proceedAlert = await this.alertController.create({
               header: 'Solicitud Aceptada',
               message: '¡Tu solicitud ha sido aceptada! ¿Quieres ir a tu viaje?',
