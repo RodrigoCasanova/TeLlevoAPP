@@ -15,19 +15,11 @@
     <!-- Menú de perfil desplegable a la izquierda -->
     <div *ngIf="showProfileMenu" class="profile-menu">
       <ion-list>
-        <ion-item *ngIf="!isLoggedIn" (click)="openLogin()">
-          <ion-icon slot="start" name="log-in"></ion-icon>
-          Iniciar Sesión
-        </ion-item>
-        <ion-item *ngIf="!isLoggedIn" (click)="openRegistro()">
-          <ion-icon slot="start" name="person-add"></ion-icon>
-          Registrarse
-        </ion-item>
-        <ion-item *ngIf="isLoggedIn" (click)="viewProfile()">
+        <ion-item (click)="viewProfile()">
           <ion-icon slot="start" name="person-circle"></ion-icon>
           Ver Perfil
         </ion-item>
-        <ion-item *ngIf="isLoggedIn" (click)="logout()">
+        <ion-item (click)="logout()">
           <ion-icon slot="start" name="log-out"></ion-icon>
           Cerrar Sesión
         </ion-item>
@@ -39,10 +31,6 @@
         <h2>Bienvenido a TeLlevoAPP</h2>
         <p>Organiza tu viaje de retorno a casa o busca transporte con otros compañeros de DUOC.</p>
         <img src="assets/img/logo2.0.png" alt="Bienvenida" />
-      </div>
-
-      <div *ngIf="isLoggedIn" class="ion-text-center">
-        <h3>Bienvenido, {{ currentUser.nombre }} {{ currentUser.apellido }}!</h3>
       </div>
 
       <ion-card>
@@ -64,22 +52,6 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-        </ion-card-content>
-      </ion-card>
-
-      <!-- Si el usuario tiene un viaje activo -->
-      <ion-card *ngIf="activeRide">
-        <ion-card-header>
-          <ion-card-title>Tu viaje actual</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-label>
-            <h2>Conductor: {{ activeRide.driverName }}</h2>
-            <p>Destino: {{ activeRide.destination }}</p>
-            <p>Hora de salida: {{ activeRide.departureTime }}</p>
-            <p>Tarifa: {{ activeRide.cost }} CLP</p>
-          </ion-label>
-          <ion-button color="danger" (click)="cancelRide()">Cancelar viaje</ion-button>
         </ion-card-content>
       </ion-card>
     </ion-content>

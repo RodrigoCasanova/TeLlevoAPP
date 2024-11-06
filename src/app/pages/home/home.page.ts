@@ -1,45 +1,58 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { FirebaseApp, initializeApp } from 'firebase/app';
+import { Firestore, getFirestore, doc, getDoc } from 'firebase/firestore'; // Cambié las importaciones a Firebase v9
+
+import { environment } from 'src/environments/environment'; // Asegúrate de que esto se importe correctamente
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage {
-  isLoggedIn = false; // Cambia a true cuando el usuario inicie sesión
+export class HomePage implements OnInit {
   showProfileMenu = false; // Controla la visibilidad del menú de perfil
   activeRide: any = null; // Ajusta el tipo según tu estructura de datos
-  currentUser: any = null; // Almacena los datos del usuario actual
+  currentUser: any = null; // Inicializa como null
+  firestore: Firestore; // Define la variable firestore para inyectarla
+  firebaseApp: FirebaseApp; // FirebaseApp
 
-  constructor(private navCtrl: NavController) { }
-
-  ngOnInit() {
-    this.checkLoginStatus();
+  constructor(
+    private navCtrl: NavController,
+    private afAuth: AngularFireAuth
+  ) {
+    // Inicializa Firebase con la configuración de environment.ts
+    this.firebaseApp = initializeApp(environment.firebaseConfig);
+    // Inicializa Firestore con la instancia de FirebaseApp
+    this.firestore = getFirestore(this.firebaseApp);
   }
 
-  checkLoginStatus() {
-    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (this.isLoggedIn) {
-      this.currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    }
+  ngOnInit() {
+    // Obtener el usuario logueado desde Firebase
+    this.afAuth.authState.subscribe(async user => {
+      if (user) {
+        // Si el usuario está logueado, obtenemos sus datos desde Firestore
+        const userRef = doc(this.firestore, `users/${user.uid}`);
+        try {
+          const userDoc = await getDoc(userRef);
+          if (userDoc.exists()) {
+            this.currentUser = userDoc.data();
+          } else {
+            console.log('No se encontraron datos del usuario.');
+          }
+        } catch (error) {
+          console.error('Error al obtener el documento:', error);
+        }
+      } else {
+        console.log('Usuario no logueado');
+      }
+    });
   }
 
   // Mostrar u ocultar el menú de perfil
   toggleProfileMenu() {
     this.showProfileMenu = !this.showProfileMenu;
-  }
-
-  // Navegar a la página de inicio de sesión
-  openLogin() {
-    this.navCtrl.navigateForward('/login');
-    this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
-  }
-
-  // Navegar a la página de registro
-  openRegistro() {
-    this.navCtrl.navigateForward('/registro');
-    this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
   }
 
   // Navegar a la página de perfil
@@ -49,17 +62,12 @@ export class HomePage {
   }
 
   // Lógica para cerrar sesión
-  // Lógica para cerrar sesión
   logout() {
-    localStorage.removeItem('isLoggedIn'); // Elimina el estado de inicio de sesión
-    localStorage.removeItem('currentUser'); // Elimina los datos del usuario
-    this.isLoggedIn = false; // Actualiza el estado
-    this.currentUser = null; // Limpia los datos del usuario
-    this.showProfileMenu = false; // Oculta el menú después de seleccionar la opción
-    console.log('Sesión cerrada');
-    this.navCtrl.navigateRoot('/login'); // Redirige al usuario a la página de inicio de sesión
+    this.afAuth.signOut().then(() => {
+      this.currentUser = null; // Limpia los datos del usuario
+      this.navCtrl.navigateRoot('/login'); // Redirige al usuario a la página de inicio de sesión
+    });
   }
-
 
   // Lógica para registrar como conductor
   registerAsDriver() {
@@ -74,10 +82,5 @@ export class HomePage {
   // Cancelar el viaje
   cancelRide() {
     console.log('Viaje cancelado');
-  }
-
-  // Navegar a la página del viaje
-  openViaje() {
-    this.navCtrl.navigateForward('/viaje');
   }
 }

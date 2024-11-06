@@ -4,5 +4,6 @@ export interface Usuario {
     nombre: string;
     apellido: string;
     correo: string; // Nuevo campo
+    profileImage?: string; // Añadir esta propiedad como opcional
   }
   

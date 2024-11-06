@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { EditProfilePage } from '../edit-profile/edit-profile.page'; // Importa la página del modal
 import { NavController } from '@ionic/angular';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Usuario } from 'src/app/interfaces/iusuario';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-perfil',
@@ -9,54 +12,80 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./perfil.page.scss'],
 })
 export class PerfilPage implements OnInit {
-  name = 'Tu Nombre';
-  email = 'tu-email@ejemplo.com';
-  phone = '+56 9 1234 5678';
-  bio = 'Estudiante de programación, apasionado por el desarrollo móvil y la tecnología.';
-  city = 'Concepción';
-  vehicle = 'Toyota Corolla 2020';
+  currentUser: Usuario | null = null;
+  isEditing: boolean = false;
+  imageFile: File | null = null;
 
-  constructor(private modalCtrl: ModalController, private navCtrl: NavController) { }
+  constructor(
+    private navCtrl: NavController,
+    private afAuth: AngularFireAuth,
+    private firestore: AngularFirestore,
+    private storage: AngularFireStorage
+  ) {}
 
   ngOnInit() {
-    this.name = localStorage.getItem('name') || 'Tu Nombre';
-    this.email = localStorage.getItem('email') || 'tu-email@ejemplo.com';
-    this.phone = localStorage.getItem('phone') || '+56 9 1234 5678';
-    this.bio = localStorage.getItem('bio') || 'Estudiante de programación, apasionado por el desarrollo móvil y la tecnología.';
-    this.city = localStorage.getItem('city') || 'Concepción';
-    this.vehicle = localStorage.getItem('vehicle') || 'Toyota Corolla 2020';
+    this.afAuth.authState.subscribe(async (user) => {
+      if (user) {
+        const userRef = this.firestore.collection('users').doc(user.uid);
+        const userDoc = await userRef.get().toPromise();
+
+        if (userDoc.exists) {
+          this.currentUser = userDoc.data() as Usuario;
+        } else {
+          console.log('No se encontraron datos del usuario.');
+        }
+      } else {
+        console.log('Usuario no logueado');
+      }
+    });
   }
 
-  async editProfile() {
-    const modal = await this.modalCtrl.create({
-      component: EditProfilePage,
-      componentProps: {
-        name: this.name,
-        email: this.email,
-        phone: this.phone,
-        bio: this.bio,
-        city: this.city,
-        vehicle: this.vehicle
-      }
-    });
+  onFileSelected(event: any) {
+    this.imageFile = event.target.files[0];
+  }
 
-    modal.onDidDismiss().then((data) => {
-      if (data.data) {
-        // Actualizar el perfil con los datos editados
-        this.name = data.data.name;
-        this.email = data.data.email;
-        this.phone = data.data.phone;
-        this.bio = data.data.bio;
-        this.city = data.data.city;
-        this.vehicle = data.data.vehicle;
-      }
-    });
+  async saveChanges() {
+    if (this.currentUser) {
+      const user = await this.afAuth.currentUser;
+      if (user) {
+        if (this.imageFile) {
+          const filePath = `profileImages/${user.uid}`;
+          const fileRef = this.storage.ref(filePath);
+          const uploadTask = this.storage.upload(filePath, this.imageFile);
 
-    await modal.present();
+          uploadTask.snapshotChanges().pipe(
+            finalize(async () => {
+              const downloadURL = await fileRef.getDownloadURL().toPromise();
+              this.currentUser!.profileImage = downloadURL;
+              await this.updateUserData(user.uid);
+              this.isEditing = false;
+              this.imageFile = null;
+            })
+          ).subscribe();
+        } else {
+          await this.updateUserData(user.uid);
+          this.isEditing = false;
+        }
+      }
+    }
+  }
+
+  async updateUserData(uid: string) {
+    await this.firestore.collection('users').doc(uid).update({
+      nombre: this.currentUser!.nombre,
+      apellido: this.currentUser!.apellido,
+      correo: this.currentUser!.correo,
+      username: this.currentUser!.username,
+      profileImage: this.currentUser!.profileImage || null
+    });
+    console.log('Datos actualizados correctamente');
+  }
+
+  editProfile() {
+    this.isEditing = true;
   }
 
   goBack() {
-    // Función para regresar a la página anterior
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/home');
   }
 }

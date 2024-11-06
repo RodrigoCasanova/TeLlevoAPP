@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { FirebaseService } from 'src/app/services/firebase.service';
 import { Usuario } from 'src/app/interfaces/iusuario';
-import { LocaldbService } from 'src/app/services/localdb.service';
 
 @Component({
   selector: 'app-registro',
@@ -10,67 +10,81 @@ import { LocaldbService } from 'src/app/services/localdb.service';
   styleUrls: ['./registro.page.scss'],
 })
 export class RegistroPage implements OnInit {
-  
+
   usr: Usuario = {
     username: '',
     password: '',
     nombre: '',
     apellido: '',
     correo: ''
-  }
+  };
 
-  constructor(private db: LocaldbService,
-              private toastController: ToastController,
-              private alertController: AlertController,
-              private router: Router) { }
+  // Variable para controlar el spinner de carga
+  isLoading = false;
+
+  constructor(
+    private firebaseService: FirebaseService,
+    private toastController: ToastController,
+    private alertController: AlertController,
+    private router: Router
+  ) { }
 
   ngOnInit() {}
 
-  async presentToast(position: 'top' | 'middle' | 'bottom') {
+  async presentToast(message: string, color: string) {
     const toast = await this.toastController.create({
-      message: 'El usuario ya existe',
+      message: message,
       duration: 1500,
-      position: position,
-      color: 'danger',
-      header: 'Error!',
-      cssClass: 'textoast',
+      position: 'top',
+      color: color
     });
-
     await toast.present();
   }
 
   validateEmail(email: string): boolean {
-    return email.endsWith('@duocuc.cl') || email.endsWith('@duoc.cl');
+    return email.endsWith('@duocuc.cl');
   }
 
-  registrar() {
+  async registrar() {
     if (!this.validateEmail(this.usr.correo)) {
-      this.presentToast('top'); // Puedes personalizar el mensaje
+      this.presentToast('El correo debe ser de la universidad.', 'danger');
       return;
     }
 
-    let buscado = this.db.obtener(this.usr.username);
-    
-    buscado.then(datos => {
-      if (datos === null) {
-        // Guardar el usuario en LocalStorage
-        this.db.guardar(this.usr.username, this.usr);
-        this.presentAlert();
-      } else {
-        // Mostrar toast si el usuario ya existe
-        this.presentToast('top');
+    if (this.usr.password.length < 6) {
+      this.presentToast('La contraseña debe tener al menos 6 caracteres.', 'danger');
+      return;
+    }
+
+    // Activar el spinner mientras se realiza el registro
+    this.isLoading = true;
+
+    try {
+      // Llamamos al servicio Firebase para crear el usuario
+      const userCredential = await this.firebaseService.registerUser(this.usr.username, this.usr.password, this.usr.correo);
+      if (userCredential) {
+        // Guardamos los datos adicionales en Firestore usando el uid del usuario
+        const uid = userCredential.user?.uid;  // Obtener el uid del usuario
+        if (uid) {
+          await this.firebaseService.saveUserData(uid, this.usr); // Pasar el uid al guardar los datos
+          this.presentAlert();
+        } else {
+          throw new Error('No se pudo obtener el UID del usuario');
+        }
       }
-    }).catch(error => {
-      console.error('Error al buscar el usuario:', error);
-      this.presentToast('top'); // O podrías mostrar un toast diferente
-    });
+    } catch (error) {
+      console.error('Error al registrar el usuario: ', error);
+      this.presentToast('Hubo un error al registrar el usuario', 'danger');
+    } finally {
+      // Desactivar el spinner después de que el proceso se complete
+      this.isLoading = false;
+    }
   }
 
   async presentAlert() {
     const alert = await this.alertController.create({
-      header: 'Usuario Registrado con Éxito!!!',
-      subHeader: '',
-      message: 'Ahora puedes utilizar la aplicación',
+      header: '¡Registro exitoso!',
+      message: 'Ahora puedes iniciar sesión en la aplicación.',
       buttons: [{
         text: 'Continuar',
         handler: () => {

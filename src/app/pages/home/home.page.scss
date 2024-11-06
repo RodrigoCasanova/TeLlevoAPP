@@ -1,20 +1,20 @@
-ion-button.action-button {
-  height: 60px; /* Altura deseada para los botones */
-  --background: var(--ion-color-primary); /* Color de fondo */
-  --color: white; /* Color del texto */
-  --border-radius: 10px; /* Bordes redondeados */
-  font-size: 16px; /* Tamaño de la fuente */
-}
-
 .profile-menu {
   position: absolute;
-  top: 60px;
-  right: 10px;
+  top: 60px; /* Ajusta este valor según la altura de tu barra de herramientas */
+  left: 10px; /* Mueve el menú a la izquierda */
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px;
+  width: 200px; /* Ajusta el ancho si es necesario */
   z-index: 100;
+}
+
+ion-button.action-button {
+  height: 60px;
+  --background: var(--ion-color-primary);
+  --color: white;
+  --border-radius: 10px;
+  font-size: 16px;
 }
 
 .welcome-container {
@@ -24,14 +24,4 @@ ion-button.action-button {
 .welcome-container img {
   max-width: 150px;
   margin: 20px auto;
-}
-.profile-menu {
-  position: absolute;
-  top: 60px; // Ajusta esto si es necesario
-  left: 10px; // Mueve el menú a la izquierda
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px; // Ajusta el ancho si es necesario
-  z-index: 100;
 }

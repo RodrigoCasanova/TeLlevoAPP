@@ -1,31 +1,48 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
-        <ion-icon slot="start" name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Mi Perfil</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding">
-  <ion-card>
+  <ion-card *ngIf="currentUser">
     <ion-card-header>
       <div class="welcome-container">
-        <img src="assets/img/rodri.jpg" alt="Bienvenida" />
+        <img [src]="currentUser.profileImage || 'assets/img/login.png'" alt="Perfil" />
       </div>
-        <ion-card-title class="text-center"> {{ name }}</ion-card-title>
+      <ion-card-title class="text-center">{{ currentUser.nombre }} {{ currentUser.apellido }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
-      <p><strong>Correo:</strong> {{ email }}</p>
-      <p><strong>Teléfono:</strong> {{ phone }}</p>
-      <p><strong>Biografía:</strong> {{ bio }}</p>
-      <p><strong>Ciudad:</strong> {{ city }}</p>
-      <p><strong>Vehículo:</strong> {{ vehicle }}</p>
+      <form *ngIf="isEditing" (ngSubmit)="saveChanges()">
+        <!-- Campos de edición -->
+        <ion-item>
+          <ion-label position="stacked">Imagen de perfil</ion-label>
+          <input type="file" (change)="onFileSelected($event)" />
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input [(ngModel)]="currentUser.nombre" name="nombre" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Apellido</ion-label>
+          <ion-input [(ngModel)]="currentUser.apellido" name="apellido" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Correo</ion-label>
+          <ion-input [(ngModel)]="currentUser.correo" name="correo" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Usuario</ion-label>
+          <ion-input [(ngModel)]="currentUser.username" name="username" required></ion-input>
+        </ion-item>
+        
+        <ion-button expand="full" type="submit" color="primary">Guardar cambios</ion-button>
+      </form>
+
+      <div *ngIf="!isEditing">
+        <p><strong>Correo:</strong> {{ currentUser.correo }}</p>
+        <p><strong>Usuario:</strong> {{ currentUser.username }}</p>
+        <ion-button expand="full" color="primary" (click)="editProfile()">Editar Perfil</ion-button>
+      </div>
+
+      <!-- Botón Volver -->
+      <ion-button expand="full" color="medium" (click)="goBack()">Volver</ion-button>
     </ion-card-content>
   </ion-card>
-
-  <ion-button expand="full" color="primary" (click)="editProfile()">Editar Perfil</ion-button>
 </ion-content>
