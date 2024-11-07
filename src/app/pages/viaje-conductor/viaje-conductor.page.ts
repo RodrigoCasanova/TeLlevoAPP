@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { Router } from '@angular/router'; // Usamos Router en lugar de NavController
+import { AlertController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-viaje-conductor',
@@ -8,13 +11,15 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./viaje-conductor.page.scss'],
 })
 export class ViajeConductorPage implements OnInit {
+  // Datos del viaje
   ride: any = {
     startLocation: '',
     destination: '',
     departureTime: '',
     costPerKm: 0,
+    availableSeats: 4,  // Número de asientos disponibles (puede ser ajustado por el conductor)
   };
-
+  
   passengers: any[] = [
     {
       name: 'Luis Ilufin',
@@ -37,36 +42,72 @@ export class ViajeConductorPage implements OnInit {
   ];
 
   constructor(
-    private navCtrl: NavController,
+    private router: Router, // Usamos Router en lugar de NavController
     private alertController: AlertController,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private datePipe: DatePipe,
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.ride.startLocation = params["destination"] || 'Duoc UC Concepcion';
-      this.ride.destination = params["location"] ;
-      this.ride.departureTime = params["startDateTime"];
-      this.ride.costPerKm = params["cost"];
+    this.route.queryParams.subscribe((params) => {
+      if (params) {
+        this.ride.startLocation = params['startLocation'];
+        this.ride.destination = params['destination'] || 'Duoc UC Concepcion';
+        
+        // Formatear departureTime usando DatePipe
+        const formattedTime = this.datePipe.transform(params['departureTime'], 'HH:mm');
+        this.ride.departureTime = formattedTime ? formattedTime : 'Sin Hora';
+
+        this.ride.costPerKm = params['cost'];
+      }
     });
   }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.back(); // Simplemente regresa a la página anterior
+  }
+  
+  async showAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Error',
+      message: message,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
   }
 
   confirmPassenger(passenger: any) {
-    passenger.status = 'Confirmado';
+    if (this.ride.availableSeats > 0 && passenger.status === 'Pendiente de Confirmación') {
+      passenger.status = 'Confirmado';  // Cambiar el estado del pasajero
+      this.ride.availableSeats--;  // Reducir los asientos disponibles
+    } else if (passenger.status !== 'Pendiente de Confirmación') {
+      if (passenger.status === 'Cancelado') {
+        this.showAlert('Este pasajero ya ha sido cancelado y no puede ser confirmado.');
+      } else {
+        this.showAlert('Este pasajero ya ha sido confirmado.');
+      }
+    } else {
+      this.showAlert('No hay asientos disponibles para más pasajeros.');
+    }
   }
-
+  
   rejectPassenger(passenger: any) {
-    passenger.status = 'Cancelado';
+    if (passenger.status === 'Confirmado') {
+      this.ride.availableSeats++;  // Restaurar un asiento si se cancela un pasajero confirmado
+    }
+    passenger.status = 'Cancelado';  // Cambiar el estado del pasajero a 'Cancelado'
   }
 
+  // Verifica si todos los pasajeros han sido confirmados o rechazados
   canScheduleTrip(): boolean {
-    return this.passengers.every(passenger => passenger.status === 'Confirmado' || passenger.status === 'Cancelado');
+    return this.passengers.every(
+      (passenger) => passenger.status === 'Confirmado' || passenger.status === 'Cancelado'
+    );
   }
 
+  // Dentro de la función scheduleTrip() en ViajeConductorPage
   async scheduleTrip() {
     const alert = await this.alertController.create({
       header: 'Confirmar Viaje',
@@ -79,9 +120,11 @@ export class ViajeConductorPage implements OnInit {
         {
           text: 'Confirmar',
           handler: () => {
-            // Pasar solo el destino como parámetro de la ruta
-            this.navCtrl.navigateForward('/ruta-conductor', {
-              queryParams: { location: this.ride.destination }
+            // Solo pasamos startLocation como destino
+            this.router.navigate(['/ruta-conductor'], {
+              queryParams: {
+                destination: this.ride.startLocation,  // Pasamos solo el destino
+              },
             });
           },
         },
@@ -90,4 +133,5 @@ export class ViajeConductorPage implements OnInit {
   
     await alert.present();
   }
-}  
+  
+}

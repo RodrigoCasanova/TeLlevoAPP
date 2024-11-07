@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
-
 declare var google: any;
 
 @Component({
@@ -11,35 +11,38 @@ declare var google: any;
 })
 export class RutaConductorPage implements OnInit {
   ride: any = {
-    destination: '', // Se llenará con el parámetro de la ruta
+    startLocation: '', // Aquí es donde se asigna el destino
   };
+  
+  
 
-  startPosition = { lat: -36.79448680693151, lng: -73.06436871720969 }; // Nueva posición de inicio
+  startPosition = { lat: -36.79448680693151, lng: -73.06436871720969 }; // Posición inicial
   endPosition: any;
 
   map: any;
   directionsService: any;
   directionsRenderer: any;
-  searchQuery: string = '';
-  suggestions: string[] = [];
 
-  constructor(private navCtrl: NavController, private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private navCtrl: NavController
+  ) {}
 
   ngOnInit() {
-    // Obtener parámetros de consulta
     this.route.queryParams.subscribe(params => {
-      this.ride.destination = params['location']; // Asignar el destino desde los parámetros
-      this.updateDestinationCoordinates(this.ride.destination); // Actualiza las coordenadas del destino
+      if (params) {
+        // Asignamos el 'destination' a 'startLocation'
+        this.ride.startLocation = params['destination'];  // 'destination' es el 'startLocation' del viaje conductor
+        this.updateDestinationCoordinates(this.ride.startLocation); // Actualiza las coordenadas del destino
+      }
     });
-    
+
     this.initMap(); // Inicializa el mapa
-  }
-  
-  goBack() {
-    this.navCtrl.back();
   }
 
   initMap() {
+    // Inicializa el mapa de Google Maps
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.startPosition,
       zoom: 10,
@@ -56,12 +59,13 @@ export class RutaConductorPage implements OnInit {
     this.directionsRenderer.setMap(this.map);
 
     if (this.endPosition) {
-      this.placeMarkers(); // Coloca los marcadores si hay una posición de destino
+      this.placeMarkers(); // Coloca los marcadores si ya hay un destino
     }
   }
 
   calculateAndDisplayRoute() {
-    if (!this.endPosition) return; // Si no hay destino, no calcules la ruta
+    // Calcula y muestra la ruta
+    if (!this.endPosition) return; // Si no hay un destino, no se calcula la ruta
 
     this.directionsService.route(
       {
@@ -81,6 +85,7 @@ export class RutaConductorPage implements OnInit {
   }
 
   placeMarkers() {
+    // Coloca los marcadores en el mapa
     new google.maps.Marker({
       position: this.startPosition,
       map: this.map,
@@ -91,50 +96,42 @@ export class RutaConductorPage implements OnInit {
       new google.maps.Marker({
         position: this.endPosition,
         map: this.map,
-        title: 'Destino: ' + this.ride.destination,
+        title: 'Destino: ' + this.ride.startLocation, // Usamos startLocation como destino
       });
     }
-  }
-
-  onSearchChange() {
-    if (this.searchQuery.length < 2) {
-      this.suggestions = []; // Limpia las sugerencias si el input es corto
-      return;
-    }
-
-    const service = new google.maps.places.AutocompleteService();
-    service.getPlacePredictions({ input: this.searchQuery }, (predictions: any, status: any) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-        this.suggestions = predictions.map((prediction: any) => prediction.description); // Muestra las sugerencias
-      }
-    });
-  }
-
-  selectSuggestion(suggestion: string) {
-    this.ride.destination = suggestion; // Establece el nuevo destino
-    this.updateDestinationCoordinates(suggestion); // Actualiza las coordenadas y la ruta
-    this.suggestions = []; // Limpia las sugerencias
-    this.searchQuery = ''; // Limpia el campo de búsqueda
   }
 
   updateDestinationCoordinates(destination: string) {
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ address: destination }, (results: any, status: any) => {
       if (status === google.maps.GeocoderStatus.OK && results[0]) {
-        this.endPosition = results[0].geometry.location; // Obtiene la ubicación del destino
-        this.calculateAndDisplayRoute(); // Calcula la ruta a la nueva ubicación
-        this.placeMarkers(); // Coloca el marcador del nuevo destino
+        this.endPosition = results[0].geometry.location; // Obtiene las coordenadas del destino
+        this.calculateAndDisplayRoute(); // Calcula la ruta hacia el destino
+        this.placeMarkers(); // Coloca el marcador en el destino
       } else {
         window.alert('No se pudo encontrar el destino: ' + status);
       }
     });
   }
 
-  navigateToChat() {
-    this.router.navigate(['/chat']); // Cambia '/chat' a la ruta correspondiente de tu página de chat
+  // Función para navegar a la página de inicio
+  goHome() {
+    this.router.navigate(['/home']);
   }
 
-  goHome() {
-    this.navCtrl.navigateRoot('/home'); // Cambia '/home' a la ruta correspondiente de tu página de inicio
+  // Función para navegar al chat
+  navigateToChat() {
+    this.router.navigate(['/chat']);
+  }
+
+  // Función para seleccionar sugerencia
+  selectSuggestion(suggestion: string) {
+    this.ride.startLocation = suggestion;
+    this.updateDestinationCoordinates(suggestion); // Actualiza el destino y calcula la ruta
+  }
+
+  // Función de "Go Back" (volver atrás)
+  goBack() {
+    this.navCtrl.back(); // Simplemente regresa a la página anterior
   }
 }

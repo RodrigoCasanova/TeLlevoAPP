@@ -44,21 +44,21 @@ export class FirebaseService {
     }
   }
 
-  
-async saveUserData(uid: string, userData: Usuario): Promise<void> {
-  try {
-    // Usamos el UID del usuario como ID del documento en Firestore
+
+  async saveUserData(uid: string, userData: Usuario): Promise<void> {
+    try {
+      // Usamos el UID del usuario como ID del documento en Firestore
 
 
 
-    
-    await this.firestore.collection('users').doc(uid).set(userData);
-    console.log('Usuario guardado en Firestore');
-  } catch (error) {
-    console.error('Error al guardar en Firestore: ', error);
-    throw error;
+
+      await this.firestore.collection('users').doc(uid).set(userData);
+      console.log('Usuario guardado en Firestore');
+    } catch (error) {
+      console.error('Error al guardar en Firestore: ', error);
+      throw error;
+    }
   }
-}
 
 
   // Login de usuario
@@ -103,7 +103,7 @@ async saveUserData(uid: string, userData: Usuario): Promise<void> {
       throw error;
     }
   }
-  
+
   async getCarsForUser(uid: string): Promise<IAuto[]> {
     try {
       const snapshot = await this.firestore.collection('autos', ref => ref.where('userId', '==', uid)).get().toPromise();
@@ -118,51 +118,57 @@ async saveUserData(uid: string, userData: Usuario): Promise<void> {
       throw error;
     }
   }
-  
-async deleteCar(carId: string): Promise<void> {
-  await this.firestore.collection('autos').doc(carId).delete();
-}
-addCar(car: IAuto) {
-  return this.firestore.collection('autos').add(car);
-}
-saveSelectedCar(car: IAuto) {
-  // Asumo que quieres guardar el auto en una colección 'selectedCars' o similar
-  return this.firestore.collection('selectedCars').add({
-    brand: car.brand,
-    model: car.model,
-    color: car.color,
-    plate: car.plate,
-    // Otros campos que desees almacenar...
-  });
-}
-async saveTransportData(uid: string, carId: string, transportData: any): Promise<void> {
-  try {
-    const transportId = this.firestore.createId(); // Crear un ID único para el viaje
-    const transportRef = this.firestore.collection('transports').doc(transportId);
 
-    // Guardamos los datos del transporte en Firestore
-    await transportRef.set({
-      ...transportData,
-      userId: uid,      // Asociamos el transporte con el ID del usuario
-      carId: carId,     // Asociamos el transporte con el ID del auto
-      createdAt: new Date().toISOString(), // Fecha de creación
+  async deleteCar(carId: string): Promise<void> {
+    await this.firestore.collection('autos').doc(carId).delete();
+  }
+  addCar(car: IAuto) {
+    return this.firestore.collection('autos').add(car);
+  }
+  saveSelectedCar(car: IAuto) {
+    // Asumo que quieres guardar el auto en una colección 'selectedCars' o similar
+    return this.firestore.collection('selectedCars').add({
+      brand: car.brand,
+      model: car.model,
+      color: car.color,
+      plate: car.plate,
+      // Otros campos que desees almacenar...
     });
+  }
+  async saveTransportData(uid: string, carId: string, transportData: any): Promise<void> {
+    try {
+      const transportId = this.firestore.createId(); // Crear un ID único para el viaje
+      const transportRef = this.firestore.collection('transports').doc(transportId);
 
-    console.log('Transporte guardado en Firestore');
-  } catch (error) {
-    console.error('Error al guardar el transporte en Firestore:', error);
-    throw error;
+      // Guardamos los datos del transporte en Firestore
+      await transportRef.set({
+        ...transportData,
+        userId: uid,      // Asociamos el transporte con el ID del usuario
+        carId: carId,     // Asociamos el transporte con el ID del auto
+        createdAt: new Date().toISOString(), // Fecha de creación
+      });
+
+      console.log('Transporte guardado en Firestore');
+    } catch (error) {
+      console.error('Error al guardar el transporte en Firestore:', error);
+      throw error;
+    }
   }
-}
-async getUserTransports(uid: string) {
-  try {
-    const querySnapshot = await this.firestore.collection('transports', ref => ref.where('userId', '==', uid)).get().toPromise();
-    return querySnapshot.docs.map(doc => doc.data());
-  } catch (error) {
-    console.error('Error al obtener los viajes:', error);
-    throw error;
+  // FirebaseService
+  async getUserTransports(uid: string): Promise<any[]> {
+    try {
+      const querySnapshot = await this.firestore.collection('transports', ref => ref.where('userId', '==', uid)).get().toPromise();
+      return querySnapshot.docs.map(doc => {
+        // Realizamos un casting explícito para asegurarnos de que los datos son del tipo esperado
+        const data = doc.data() as { [key: string]: any };
+        return { id: doc.id, ...data }; // Ahora TypeScript permite el spread operator
+      });
+    } catch (error) {
+      console.error('Error al obtener los viajes:', error);
+      throw error;
+    }
   }
-}
+
 
 
 

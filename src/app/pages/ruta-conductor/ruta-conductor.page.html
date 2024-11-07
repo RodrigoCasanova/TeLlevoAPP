@@ -19,11 +19,7 @@
   
 
   <!-- Lista de sugerencias -->
-  <ion-list *ngIf="suggestions.length > 0">
-    <ion-item *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)">
-      {{ suggestion }}
-    </ion-item>
-  </ion-list>
+ 
 
   <!-- Mapa de Google -->
   <div id="map" style="height: 300px; width: 100%;"></div>
@@ -36,7 +32,7 @@
       <ion-item>
         <ion-label>
           <h2>Destino Final:</h2>
-          <p>{{ ride.destination }}</p>
+          <p>{{ ride.startLocation }}</p> <!-- Cambié esto para mostrar el 'startLocation' -->
         </ion-label>
       </ion-item>
     </ion-card-content>

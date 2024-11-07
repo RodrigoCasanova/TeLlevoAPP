@@ -18,16 +18,16 @@
     <ion-card-content>
       <ion-item>
         <ion-label>Inicio del Viaje:</ion-label>
-        <ion-text>{{ ride.startLocation }}</ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label>Destino:</ion-label>
         <ion-text>{{ ride.destination }}</ion-text>
       </ion-item>
       <ion-item>
-        <ion-label>Asientos:</ion-label>
-        <ion-text>Disponibles 0</ion-text>
+        <ion-label>Destino:</ion-label>
+        <ion-text>{{ ride.startLocation }}</ion-text>
       </ion-item>
+      <ion-item>
+        <ion-label>Asientos Disponibles:</ion-label>
+        <ion-text>{{ ride.availableSeats }}</ion-text>
+      </ion-item>      
       <ion-item>
         <ion-label>Hora de Salida:</ion-label>
         <ion-text>{{ ride.departureTime }}</ion-text>
@@ -54,13 +54,15 @@
         <p>Ubicación: {{ passenger.location }}</p>
         <p>Status: {{ passenger.status }}</p>
       </ion-label>
-      <ion-button fill="clear" color="success" (click)="confirmPassenger(passenger)">
+      <!-- Botones de Confirmar y Rechazar -->
+      <ion-button fill="clear" color="success" [disabled]="ride.availableSeats <= 0" (click)="confirmPassenger(passenger)">
         <ion-icon name="checkmark-circle-outline"></ion-icon>
       </ion-button>
       <ion-button fill="clear" color="danger" (click)="rejectPassenger(passenger)">
         <ion-icon name="close-circle-outline"></ion-icon>
       </ion-button>
     </ion-item>
+    
   </ion-list>
 
   <!-- Botón Programar Viaje -->
