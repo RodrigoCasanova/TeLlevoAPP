@@ -53,12 +53,10 @@
     </ion-card>
 
     <!-- Botón para ofrecer transporte -->
-    <ion-button 
-      *ngIf="selectedCar" 
-      expand="block" 
-      color="primary" 
-      (click)="offerTransport()">
+    <!-- Botón para ofrecer transporte -->
+    <ion-button [disabled]="!selectedCar" expand="block" color="primary" (click)="offerTransport()">
       Ofrecer Transporte
     </ion-button>
+
   </div>
 </ion-content>

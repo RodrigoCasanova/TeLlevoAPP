@@ -1,8 +1,12 @@
-export interface Auto {
-    marca: string;
-    modelo: string;
-    anio: number;
-    color: string;
-    patente: string; // Nuevo campo
-    descripcion: string ;
-  }
+// src/app/interfaces/iauto.ts
+
+export interface IAuto {
+  id?: string;
+  brand: string;
+  model: string;
+  year: string;
+  color: string;
+  plate: string;
+  description?: string; // El campo description es opcional
+  selected?: boolean;
+}

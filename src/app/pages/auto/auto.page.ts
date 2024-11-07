@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { LocaldbService } from 'src/app/services/localdb.service';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { AngularFireAuth } from '@angular/fire/compat/auth';  // Importar AngularFireAuth
 
 @Component({
   selector: 'app-auto',
@@ -17,7 +18,6 @@ export class AutoPage {
     description: ''
   };
 
-  // Modelos disponibles para cada marca
   brandModels: { [key: string]: string[] } = {
     toyota: ['Corolla', 'Camry', 'Hilux'],
     nissan: ['Versa', 'X-Trail', 'Frontier'],
@@ -35,39 +35,48 @@ export class AutoPage {
   models: string[] = [];
   years: string[] = Array.from({ length: new Date().getFullYear() - 1989 }, (_, i) => (1990 + i).toString());
 
-  constructor(private navCtrl: NavController, private localdb: LocaldbService) {}
+  constructor(
+    private navCtrl: NavController, 
+    private firebaseService: FirebaseService,
+    private afAuth: AngularFireAuth  // Inyectar AngularFireAuth
+  ) {}
 
   updateModels(event: any) {
     const selectedBrand = event.detail.value;
     this.models = this.brandModels[selectedBrand] || [];
   }
 
-  saveCar() {
+  // Guardar el auto en Firestore
+  async saveCar() {
     if (this.car.brand && this.car.model && this.car.year && this.car.color && this.car.plate) {
-      const newCar = {
-        brand: this.car.brand,
-        model: this.car.model,
-        year: this.car.year,
-        color: this.car.color,
-        plate: this.car.plate,
-        description: this.car.description,
-      };
-  
-      this.localdb.obtener('carList').then(storedCars => {
-        const cars = storedCars || [];
-        cars.push(newCar); // Agrega el nuevo auto a la lista
-        this.localdb.guardar('carList', cars).then(() => {
-          console.log('Auto guardado:', newCar);
-          this.navCtrl.back(); // Regresa a la página anterior
-          // Aquí llamas a loadCars si es necesario, o puedes emitir un evento
-        });
-      });
+      try {
+        const userCredential = await this.afAuth.currentUser; // Obtener el usuario logueado
+        if (userCredential) {
+          const uid = userCredential.uid;  // Obtener el UID del usuario logueado
+
+          const newCar = {
+            brand: this.car.brand,
+            model: this.car.model,
+            year: this.car.year,
+            color: this.car.color,
+            plate: this.car.plate,
+            description: this.car.description,
+          };
+
+          // Llamar al servicio de Firebase para guardar el auto con el UID del usuario
+          await this.firebaseService.saveCarData(uid, newCar);
+          console.log('Auto guardado en Firebase');
+          this.navCtrl.back();  // Regresar a la página anterior
+        } else {
+          console.error('Usuario no logueado');
+        }
+      } catch (error) {
+        console.error('Error al guardar el auto en Firebase: ', error);
+      }
     } else {
       console.error('Todos los campos son requeridos');
     }
   }
-  
-  
 
   goBack() {
     this.navCtrl.back();

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { LocaldbService } from 'src/app/services/localdb.service';
+import { FirebaseService } from 'src/app/services/firebase.service';  // Inyectar el servicio Firebase
+import { IAuto } from 'src/app/interfaces/iauto';  // Asegúrate de tener esta interfaz definida
 
 @Component({
   selector: 'app-menu-auto',
@@ -8,40 +9,43 @@ import { LocaldbService } from 'src/app/services/localdb.service';
   styleUrls: ['./menu-auto.page.scss'],
 })
 export class MenuAutoPage {
-  cars: any[] = []; // Inicializamos el array vacío
-  selectedCar: any;
+  cars: IAuto[] = []; // Lista de autos que se cargará desde Firebase
+  selectedCar: IAuto | null = null; // Auto seleccionado
 
   constructor(
-    private navCtrl: NavController,
-    private alertController: AlertController,
-    private localdb: LocaldbService // Inyectamos el servicio
+    private navCtrl: NavController, // Para navegación
+    private alertController: AlertController, // Para mostrar alertas
+    private firebaseService: FirebaseService // Servicio para interactuar con Firebase
   ) {}
 
+  // Llamada para cargar los autos cuando la página está por aparecer
   ionViewWillEnter() {
-    this.loadCars(); // Cargar autos cada vez que la página se muestra
-  }
-  
-  async loadCars() {
-    const storedCars = await this.localdb.obtener('carList') || [];
-    if (!Array.isArray(storedCars)) {
-      console.error('Los autos guardados no son un array');
-      this.cars = []; // Reinicia la lista si no es un array
-    } else {
-      this.cars = storedCars;
-    }
-    console.log('Autos cargados:', this.cars); // Verifica que se estén cargando
+    this.loadCars(); // Cargar los autos
   }
 
+  // Función para cargar los autos desde Firebase
+  async loadCars() {
+    try {
+      this.cars = await this.firebaseService.getCarsForUser(); // Obtiene los autos desde Firebase
+      console.log('Autos cargados desde Firebase:', this.cars); // Para depuración
+    } catch (error) {
+      console.error('Error al cargar los autos:', error); // Manejo de errores
+    }
+  }
+
+  // Función para agregar un nuevo auto (navega hacia la página de auto)
   addCar() {
     this.navCtrl.navigateForward('/auto'); // Navegar a la página de agregar auto
   }
 
-  editCar(car: any) {
+  // Función para editar los detalles de un auto (en este caso solo se muestra un log)
+  editCar(car: IAuto) {
     console.log('Editar auto', car);
-    // Implementar la lógica para editar el auto
+    // Aquí puedes agregar la lógica para editar el auto (si es necesario)
   }
 
-  async confirmDelete(car: any) {
+  // Función para confirmar la eliminación de un auto
+  async confirmDelete(car: IAuto) {
     const alert = await this.alertController.create({
       header: 'Confirmación',
       message: `¿Estás seguro que quieres eliminar el auto ${car.brand} ${car.model}?`,
@@ -51,55 +55,52 @@ export class MenuAutoPage {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Cancelado');
+            console.log('Eliminación cancelada');
           }
         },
         {
           text: 'Eliminar',
           handler: () => {
-            this.deleteCar(car);
+            this.deleteCar(car); // Si confirma, elimina el auto
           }
         }
       ]
     });
 
-    await alert.present();
+    await alert.present(); // Muestra la alerta
   }
 
-  async deleteCar(car: any) {
-    console.log('Eliminar auto', car);
-    this.cars = this.cars.filter(c => c !== car);
-    
-    // Guardar la nueva lista en el storage
-    await this.localdb.guardar('carList', this.cars);
-    this.selectedCar = null; // Resetear selección después de eliminar
-  }
-
-  async offerTransport() {
-    if (this.selectedCar) {
-      // Guardar el auto seleccionado para ofrecer transporte
-      const carData = {
-        brand: this.selectedCar.brand,
-        model: this.selectedCar.model,
-        color: this.selectedCar.color,
-        plate: this.selectedCar.plate,
-      };
-
-      // Guardar los datos del auto en el LocaldbService
-      await this.localdb.guardar('selectedCar', carData);
-      
-      // Navegar a la página del conductor
-      this.navCtrl.navigateForward('/conductor');
-      console.log('Ofrecer transporte para el auto seleccionado', carData);
-    } else {
-      console.error('No hay auto seleccionado para ofrecer transporte.');
+  // Función para eliminar un auto
+  async deleteCar(car: IAuto) {
+    try {
+      await this.firebaseService.deleteCar(car.id); // Elimina el auto de Firebase usando el ID
+      this.loadCars(); // Recarga la lista de autos
+      console.log('Auto eliminado:', car);
+    } catch (error) {
+      console.error('Error al eliminar el auto:', error); // Manejo de errores
     }
   }
 
-  updateSelectedCar(car: any) {
-    this.selectedCar = this.cars.find(c => c.selected);
+  // Actualiza el auto seleccionado
+  updateSelectedCar(car: IAuto) {
+    this.selectedCar = car; // Establece el auto seleccionado
+    console.log('Auto seleccionado:', this.selectedCar);
   }
 
+  // Función para ofrecer transporte con el auto seleccionado
+  async offerTransport() {
+    if (this.selectedCar) {
+      // Guardar los datos del auto seleccionado en el local storage
+      await this.firebaseService.saveSelectedCar(this.selectedCar); // O usa el servicio Firebase para guardar
+      // Navegar a la página del conductor
+      this.navCtrl.navigateForward('/conductor');
+      console.log('Ofrecer transporte para el auto seleccionado:', this.selectedCar);
+    } else {
+      console.error('No hay auto seleccionado para ofrecer transporte');
+    }
+  }
+
+  // Función para navegar hacia atrás
   goBack() {
     this.navCtrl.back(); // Simplemente regresa a la página anterior
   }
