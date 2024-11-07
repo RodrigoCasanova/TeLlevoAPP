@@ -53,7 +53,7 @@ export class AutoPage {
         const userCredential = await this.afAuth.currentUser; // Obtener el usuario logueado
         if (userCredential) {
           const uid = userCredential.uid;  // Obtener el UID del usuario logueado
-
+  
           const newCar = {
             brand: this.car.brand,
             model: this.car.model,
@@ -62,7 +62,7 @@ export class AutoPage {
             plate: this.car.plate,
             description: this.car.description,
           };
-
+  
           // Llamar al servicio de Firebase para guardar el auto con el UID del usuario
           await this.firebaseService.saveCarData(uid, newCar);
           console.log('Auto guardado en Firebase');
@@ -77,6 +77,7 @@ export class AutoPage {
       console.error('Todos los campos son requeridos');
     }
   }
+  
 
   goBack() {
     this.navCtrl.back();

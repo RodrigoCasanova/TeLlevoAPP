@@ -15,6 +15,9 @@ export class FirebaseService {
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore
   ) { }
+  get currentUser() {
+    return this.afAuth.currentUser;
+  }
 
   // Registro de usuario
   async registerUser(username: string, password: string, email: string): Promise<any> {
@@ -86,37 +89,36 @@ async saveUserData(uid: string, userData: Usuario): Promise<void> {
     }
   }
   // Función para guardar un auto en Firestore con el UID del usuario
-async saveCarData(uid: string, car: IAuto): Promise<void> {
-  try {
-    // Usamos el UID del usuario como referencia en la colección 'autos'
-    const carId = this.firestore.createId();  // Crea un ID único para el auto
-    await this.firestore.collection('autos').doc(carId).set({
-      ...car,
-      userId: uid // Asociamos el auto al usuario logueado mediante su UID
-    });
-    console.log('Auto guardado en Firestore');
-  } catch (error) {
-    console.error('Error al guardar el auto en Firestore:', error);
-    throw error;
+  async saveCarData(uid: string, car: IAuto): Promise<void> {
+    try {
+      // Usamos el UID del usuario como referencia en la colección 'autos'
+      const carId = this.firestore.createId();  // Crea un ID único para el auto
+      await this.firestore.collection('autos').doc(carId).set({
+        ...car,
+        userId: uid  // Asociamos el auto al usuario logueado mediante su UID
+      });
+      console.log('Auto guardado en Firestore');
+    } catch (error) {
+      console.error('Error al guardar el auto en Firestore:', error);
+      throw error;
+    }
   }
-}
-getCarsForUser() {
-  return new Promise<IAuto[]>((resolve, reject) => {
-    this.firestore.collection('autos').snapshotChanges().subscribe({
-      next: (snapshot) => {
-        const cars = snapshot.map((doc: any) => {
-          const data = doc.payload.doc.data() as IAuto;
-          data.id = doc.payload.doc.id; // Agregar el ID del documento
-          return data;
-        });
-        resolve(cars); // Resuelve con la lista de autos
-      },
-      error: (error) => {
-        reject(error); // Rechaza con el error
-      }
-    });
-  });
-}
+  
+  async getCarsForUser(uid: string): Promise<IAuto[]> {
+    try {
+      const snapshot = await this.firestore.collection('autos', ref => ref.where('userId', '==', uid)).get().toPromise();
+      const cars = snapshot.docs.map(doc => {
+        const data = doc.data() as IAuto;
+        data.id = doc.id; // Agregar el ID del documento
+        return data;
+      });
+      return cars; // Devuelve los autos del usuario
+    } catch (error) {
+      console.error('Error al obtener los autos del usuario:', error);
+      throw error;
+    }
+  }
+  
 async deleteCar(carId: string): Promise<void> {
   await this.firestore.collection('autos').doc(carId).delete();
 }
@@ -133,6 +135,35 @@ saveSelectedCar(car: IAuto) {
     // Otros campos que desees almacenar...
   });
 }
+async saveTransportData(uid: string, carId: string, transportData: any): Promise<void> {
+  try {
+    const transportId = this.firestore.createId(); // Crear un ID único para el viaje
+    const transportRef = this.firestore.collection('transports').doc(transportId);
+
+    // Guardamos los datos del transporte en Firestore
+    await transportRef.set({
+      ...transportData,
+      userId: uid,      // Asociamos el transporte con el ID del usuario
+      carId: carId,     // Asociamos el transporte con el ID del auto
+      createdAt: new Date().toISOString(), // Fecha de creación
+    });
+
+    console.log('Transporte guardado en Firestore');
+  } catch (error) {
+    console.error('Error al guardar el transporte en Firestore:', error);
+    throw error;
+  }
+}
+async getUserTransports(uid: string) {
+  try {
+    const querySnapshot = await this.firestore.collection('transports', ref => ref.where('userId', '==', uid)).get().toPromise();
+    return querySnapshot.docs.map(doc => doc.data());
+  } catch (error) {
+    console.error('Error al obtener los viajes:', error);
+    throw error;
+  }
+}
+
 
 
   // FirebaseService

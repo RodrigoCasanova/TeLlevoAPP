@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { FirebaseService } from 'src/app/services/firebase.service';  // Inyectar el servicio Firebase
 import { IAuto } from 'src/app/interfaces/iauto';  // Asegúrate de tener esta interfaz definida
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-menu-auto',
@@ -21,17 +22,25 @@ export class MenuAutoPage {
   // Llamada para cargar los autos cuando la página está por aparecer
   ionViewWillEnter() {
     this.loadCars(); // Cargar los autos
+    
   }
+  
 
   // Función para cargar los autos desde Firebase
   async loadCars() {
     try {
-      this.cars = await this.firebaseService.getCarsForUser(); // Obtiene los autos desde Firebase
-      console.log('Autos cargados desde Firebase:', this.cars); // Para depuración
+      const user = await this.firebaseService.currentUser; // Obtiene el usuario logueado
+      if (user) {
+        this.cars = await this.firebaseService.getCarsForUser(user.uid); // Pasar el UID al servicio
+        console.log('Autos cargados desde Firebase:', this.cars); // Para depuración
+      } else {
+        console.error('Usuario no autenticado');
+      }
     } catch (error) {
       console.error('Error al cargar los autos:', error); // Manejo de errores
     }
   }
+  
 
   // Función para agregar un nuevo auto (navega hacia la página de auto)
   addCar() {
@@ -104,4 +113,13 @@ export class MenuAutoPage {
   goBack() {
     this.navCtrl.back(); // Simplemente regresa a la página anterior
   }
+  selectCar(car: IAuto) {
+    this.selectedCar = car;
+    console.log('Auto seleccionado:', car);
+    // Navegar a la página de conductor y pasar el carId como parámetro
+    this.navCtrl.navigateForward('/conductor', {
+      queryParams: { carId: car.id }  // Pasar el carId a través de queryParams
+    });
+  }
+
 }

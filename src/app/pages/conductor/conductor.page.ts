@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { LocaldbService } from 'src/app/services/localdb.service';
 import { NavController, AlertController } from '@ionic/angular';
+import { AngularFireAuth } from '@angular/fire/compat/auth';  // Para obtener el usuario logueado
+import { FirebaseService } from 'src/app/services/firebase.service';  // Servicio Firebase para interactuar con la base de datos
+import { ActivatedRoute } from '@angular/router';  // Para obtener los queryParams
 
 @Component({
   selector: 'app-conductor',
@@ -9,21 +11,29 @@ import { NavController, AlertController } from '@ionic/angular';
 })
 export class ConductorPage {
   // Variables para el viaje
-  selectedLocation: string = '';
-  startDateTime: string = new Date().toISOString(); // Inicializa con la fecha y hora actual
-  seats: number = 1; // Número de asientos inicial
-  cost: number = 500;  // Costo inicial
-  costType: 'fixed' | 'perKm' = 'fixed';  // Tipo de costo inicial
+  selectedLocation: string = '';  // Ubicación de destino seleccionada
+  startDateTime: string = new Date().toISOString(); // Fecha y hora de inicio
+  seats: number = 1; // Número de asientos
+  cost: number = 500;  // Costo por persona o por kilómetro
+  costType: 'fixed' | 'perKm' = 'fixed';  // Tipo de costo ('fixed' o 'perKm')
+
+  userId: string = '';  // ID del usuario logueado
+  carId: string = '';   // ID del auto seleccionado (lo recibimos a través de queryParams)
 
   constructor(
-    private localDbService: LocaldbService, 
     private navCtrl: NavController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private afAuth: AngularFireAuth,  // Servicio de Firebase para autenticación
+    private firebaseService: FirebaseService,  // Servicio Firebase para interactuar con la base de datos
+    private route: ActivatedRoute  // Para obtener los queryParams de la URL
   ) {}
 
-  // Método para regresar a la página anterior
-  goBack() {
-    this.navCtrl.back();
+  // Método para obtener el ID del usuario logueado
+  async getUserId() {
+    const user = await this.afAuth.currentUser;  // Obtener el usuario logueado
+    if (user) {
+      this.userId = user.uid;  // Guardar el UID del usuario
+    }
   }
 
   // Método para validar los campos antes de ofrecer transporte
@@ -35,47 +45,60 @@ export class ConductorPage {
         buttons: ['OK']
       });
       await errorAlert.present();
-      return false;
+      return false;  // Si algún campo no es válido, retorna false
     }
-    return true; // Todos los campos son válidos
+    return true;  // Todos los campos son válidos
   }
 
   // Método para ofrecer transporte
   async offerTransport() {
     const isValid = await this.validateFields();
-    if (!isValid) return;
+    if (!isValid) return;  // Si los campos no son válidos, no continuar
 
+    // Primero obtenemos el ID del usuario logueado
+    await this.getUserId();
+
+    // Datos del viaje
     const tripData = {
-        location: this.selectedLocation,
-        startDateTime: this.startDateTime,
-        seats: this.seats,
-        cost: this.cost,
-        costType: this.costType,
+      location: this.selectedLocation,
+      startDateTime: this.startDateTime,
+      seats: this.seats,
+      cost: this.cost,
+      costType: this.costType,
     };
 
-    let savedTrips = await this.localDbService.obtener('transportData');
-    if (!Array.isArray(savedTrips)) {
-        savedTrips = [];
-    }
+    // Ahora guardamos el viaje en Firebase
+    await this.firebaseService.saveTransportData(this.userId, this.carId, tripData);
 
-    savedTrips.push(tripData);
-    await this.localDbService.guardar('transportData', savedTrips);
-
-    console.log('Viajes guardados:', savedTrips); // Log para verificar los viajes guardados
-
+    // Mostrar una alerta de éxito
     const successAlert = await this.alertController.create({
-        header: 'Éxito',
-        message: 'Tu transporte fue ofrecido con éxito.',
-        buttons: [
-            {
-                text: 'Ir a Mis Viajes',
-                handler: () => {
-                    this.navCtrl.navigateForward('/viajes');
-                }
-            }
-        ]
+      header: 'Éxito',
+      message: 'Tu transporte fue ofrecido con éxito.',
+      buttons: [
+        {
+          text: 'Ir a Mis Viajes',
+          handler: () => {
+            this.navCtrl.navigateForward('/viajes');  // Navegar a la página de viajes
+          }
+        }
+      ]
     });
 
-    await successAlert.present();
-}
+    await successAlert.present();  // Mostrar la alerta
+  }
+
+  // Regresar a la página anterior
+  goBack() {
+    this.navCtrl.back();
+  }
+
+  // Método para obtener el carId de los queryParams
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params && params['carId']) {  // Usamos la sintaxis de índice
+        this.carId = params['carId'];  // Guardamos el carId recibido
+        console.log('CarId recibido:', this.carId);
+      }
+    });
+  }
 }
