@@ -24,6 +24,9 @@ export class LoginPage {
       const userCredential = await this.firebaseService.loginUser(this.usr.email, this.usr.password); // Usamos email en vez de username
       console.log('Usuario logueado:', userCredential);
 
+      // Guardar los datos de inicio de sesión en localStorage
+      localStorage.setItem('usuario', JSON.stringify(this.usr));
+
       // Redirigimos al usuario después del login exitoso
       this.router.navigate(['/home']);
     } catch (error) {

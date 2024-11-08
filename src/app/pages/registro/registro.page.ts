@@ -28,8 +28,10 @@ export class RegistroPage implements OnInit {
     private alertController: AlertController,
     private router: Router
   ) { }
-
-  ngOnInit() {}
+ // Variable para controlar el spinner de carga
+  ngOnInit() {
+    // Variable para controlar el spinner de carga
+  }
 
   async presentToast(message: string, color: string) {
     const toast = await this.toastController.create({
@@ -67,6 +69,10 @@ export class RegistroPage implements OnInit {
         const uid = userCredential.user?.uid;  // Obtener el uid del usuario
         if (uid) {
           await this.firebaseService.saveUserData(uid, this.usr); // Pasar el uid al guardar los datos
+
+          // Guardar los datos del usuario en localStorage
+          localStorage.setItem('usuario', JSON.stringify(this.usr));
+
           this.presentAlert();
         } else {
           throw new Error('No se pudo obtener el UID del usuario');
