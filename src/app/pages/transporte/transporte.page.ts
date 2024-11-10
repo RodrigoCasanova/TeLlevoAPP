@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { LocaldbService } from 'src/app/services/localdb.service';
 import { NavController, AlertController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
+import { FirebaseService } from 'src/app/services/firebase.service'; // Import FirebaseService
+import { map } from 'rxjs/operators'; // Importa 'map' desde 'rxjs/operators'
 
 @Component({
   selector: 'app-transporte',
@@ -12,46 +13,57 @@ export class TransportePage implements OnInit {
   selectedLocation: string = 'all';
   rides: any[] = [];
   filteredRides: any[] = [];
-  
+  loading: boolean = false; // Para manejar el estado de carga
+
   // Propiedades para almacenar la información del auto
   carBrand: string = '';
   carModel: string = '';
   carColor: string = '';
   carPlate: string = '';
 
+  // Lista de ubicaciones para filtrar
+  locations: string[] = [
+    'Concepción', 'Talcahuano', 'San Pedro', 'Lota', 'Coronel', 'Penco', 
+    'Talcahuano', 'Hualpén', 'Chillán', 'Los Ángeles'
+  ];
+
   constructor(
     private navCtrl: NavController,
-    private localDbService: LocaldbService,
+    private firebaseService: FirebaseService, // Inyectar FirebaseService
     private alertController: AlertController,
     private route: ActivatedRoute // Asegúrate de tener esto
   ) {}
 
   async ngOnInit() {
-    // Cargar los viajes ofrecidos al inicializar la página
-    const savedTrips = await this.localDbService.obtener('transportData');
-    if (savedTrips) {
-      this.rides = savedTrips; // Asigna los viajes a la variable rides
-      this.filterRides(); // Filtra los viajes
-    }
-
-    // Obtener los parámetros de la URL (opcional, si se están pasando datos de la navegación)
-    this.route.queryParams.subscribe(params => {
-      this.carBrand = params['brand'] || '';
-      this.carModel = params['model'] || '';
-      this.carColor = params['color'] || '';
-      this.carPlate = params['plate'] || '';
-    });
-
-    // Cargar los datos del auto guardados
-    const savedCar = await this.localDbService.obtener('selectedCar');
-    if (savedCar) {
-      this.carBrand = savedCar.brand || '';
-      this.carModel = savedCar.model || '';
-      this.carColor = savedCar.color || '';
-      this.carPlate = savedCar.plate || '';
+    this.loading = true; // Activar la carga mientras se obtienen los viajes
+    try {
+      // Obtener el usuario actual
+      const user = await this.firebaseService.currentUser;
+      if (user) {
+        // Obtener todos los viajes desde Firebase como un Observable
+        this.firebaseService.getAllRides().subscribe({
+          next: (allTrips: any[]) => {
+            // Filtrar los viajes para excluir los del usuario actual
+            this.rides = allTrips.filter(ride => ride.userId !== user.uid); 
+            this.filterRides(); // Filtrar los viajes después de excluir los del usuario actual
+          },
+          error: (error) => {
+            console.error('Error al cargar los viajes:', error);
+          },
+          complete: () => {
+            this.loading = false; // Desactivar la carga cuando se complete la operación
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error al obtener los datos del usuario:', error);
     }
   }
+  
+  
+  
 
+  // Filtrar los viajes disponibles por ubicación
   filterRides() {
     const now = new Date();
     const filtered = this.rides.filter(ride => {
@@ -62,9 +74,11 @@ export class TransportePage implements OnInit {
         ride.seats > 0 // Verifica que haya asientos disponibles
       );
     });
-    this.filteredRides = filtered;
+    this.filteredRides = filtered; // Asigna los viajes filtrados
   }
+  
 
+  // Método para manejar la confirmación de solicitud de viaje
   async startRide(ride: any) {
     const alert = await this.alertController.create({
       header: 'Confirmación',
@@ -91,7 +105,7 @@ export class TransportePage implements OnInit {
                 {
                   text: 'Ir al Viaje',
                   handler: () => {
-                    // Redirigir a la página de detalles del viaje
+                    // Redirigir a la página de detalles del viaje y pasar los datos
                     this.navCtrl.navigateForward('/viaje-pasajero', {
                       queryParams: { ride: JSON.stringify(ride) },
                     });
@@ -99,17 +113,19 @@ export class TransportePage implements OnInit {
                 },
               ],
             });
-
+  
             await proceedAlert.present();
           },
         },
       ],
     });
-
+  
     await alert.present();
   }
 
+  // Función para volver a la página anterior
   goBack() {
     this.navCtrl.back();
   }
+
 }

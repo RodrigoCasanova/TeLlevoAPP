@@ -4,6 +4,9 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Usuario } from 'src/app/interfaces/iusuario';
 import { IAuto } from '../interfaces/iauto';
 import { doc, deleteDoc } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';  // Importar 'map' de RxJS
+import { Observable } from 'rxjs';
+
 
 
 @Injectable({
@@ -91,18 +94,26 @@ export class FirebaseService {
   // Función para guardar un auto en Firestore con el UID del usuario
   async saveCarData(uid: string, car: IAuto): Promise<void> {
     try {
-      // Usamos el UID del usuario como referencia en la colección 'autos'
-      const carId = this.firestore.createId();  // Crea un ID único para el auto
-      await this.firestore.collection('autos').doc(carId).set({
+      // Validar si los campos obligatorios están presentes
+      if (!car.brand || !car.model || !car.year || !car.color || !car.plate) {
+        throw new Error('Faltan campos obligatorios');
+      }
+  
+      // Guardar el auto en la colección 'autos' y obtener la referencia del documento creado
+      const carRef = await this.firestore.collection('autos').add({
         ...car,
-        userId: uid  // Asociamos el auto al usuario logueado mediante su UID
+        userId: uid,  // Asociamos el auto al usuario logueado mediante su UID
       });
-      console.log('Auto guardado en Firestore');
+  
+      console.log('Auto guardado en Firestore con ID:', carRef.id);  // El ID generado automáticamente por Firebase
     } catch (error) {
       console.error('Error al guardar el auto en Firestore:', error);
       throw error;
     }
   }
+  
+  
+  
 
   async getCarsForUser(uid: string): Promise<IAuto[]> {
     try {
@@ -135,42 +146,80 @@ export class FirebaseService {
       // Otros campos que desees almacenar...
     });
   }
-  async saveTransportData(uid: string, carId: string, transportData: any): Promise<void> {
+  async saveTransportData(userId: string, plate: string, transportData: any) {
     try {
-      const transportId = this.firestore.createId(); // Crear un ID único para el viaje
-      const transportRef = this.firestore.collection('transports').doc(transportId);
-
-      // Guardamos los datos del transporte en Firestore
+      const transportRef = this.firestore.collection('transports').doc();
       await transportRef.set({
+        userId,
+        plate,
         ...transportData,
-        userId: uid,      // Asociamos el transporte con el ID del usuario
-        carId: carId,     // Asociamos el transporte con el ID del auto
-        createdAt: new Date().toISOString(), // Fecha de creación
+        createdAt: new Date().toISOString(),
       });
-
-      console.log('Transporte guardado en Firestore');
+  
+      console.log('Transporte guardado con éxito');
     } catch (error) {
       console.error('Error al guardar el transporte en Firestore:', error);
       throw error;
     }
   }
+  
+  
+  
   // FirebaseService
   async getUserTransports(uid: string): Promise<any[]> {
     try {
       const querySnapshot = await this.firestore.collection('transports', ref => ref.where('userId', '==', uid)).get().toPromise();
       return querySnapshot.docs.map(doc => {
-        // Realizamos un casting explícito para asegurarnos de que los datos son del tipo esperado
         const data = doc.data() as { [key: string]: any };
-        return { id: doc.id, ...data }; // Ahora TypeScript permite el spread operator
+        return { id: doc.id, ...data };
       });
     } catch (error) {
       console.error('Error al obtener los viajes:', error);
       throw error;
     }
   }
+  
+  getAllRides() {
+    return this.firestore.collection('transports').get().pipe(
+      map(snapshot => snapshot.docs.map(doc => doc.data()))
+    );
+  }
+  
+  async getConductorNameById(uid: string): Promise<{ nombre: string, apellido: string } | null> {
+    try {
+      const userData = await this.getUserData(uid); // Obtener los datos del usuario por su UID
+      if (userData) {
+        // Suponiendo que los datos contienen las propiedades 'nombre' y 'apellido'
+        return {
+          nombre: userData.nombre,  // Retornar el nombre del conductor
+          apellido: userData.apellido || '',  // Retornar el apellido del conductor (si no existe, retornar cadena vacía)
+        };
+      } else {
+        return null; // Si no se encuentran datos, retornar null
+      }
+    } catch (error) {
+      console.error('Error al obtener el nombre y apellido del conductor:', error);
+      return null; // Retornar null en caso de error
+    }
+  }
+  
+  // En FirebaseService
 
+  getSelectedCarByPlate(plate: string): Observable<any> {
+    const cleanedPlate = String(plate).trim();
+    console.log('Patente limpia:', cleanedPlate);
+  
+    if (!cleanedPlate) {
+      console.error('La patente es inválida');
+      return new Observable(); // Si la patente está vacía o inválida, devuelve un observable vacío
+    }
+  
+    return this.firestore.collection('selectedCars', ref => ref.where('plate', '==', cleanedPlate)).valueChanges();
+  }
 
+  
 
+  
 
   // FirebaseService
 

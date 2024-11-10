@@ -55,10 +55,15 @@ export class ViajeConductorPage implements OnInit {
         this.ride.startLocation = params['startLocation'];
         this.ride.destination = params['destination'] || 'Duoc UC Concepcion';
         
-        // Formatear departureTime usando DatePipe
-        const formattedTime = this.datePipe.transform(params['departureTime'], 'HH:mm');
-        this.ride.departureTime = formattedTime ? formattedTime : 'Sin Hora';
-
+        // Asegúrate de convertir el string de fecha en un objeto Date
+        const dateString = params['departureTime']; // Ejemplo: '21/11/2024 07:29'
+        const [day, month, year, hour, minute] = dateString.split(/[/ :]/);
+        const formattedTime = new Date(+year, +month - 1, +day, +hour, +minute);
+  
+        // Usar DatePipe para formatear la fecha
+        const formattedDepartureTime = this.datePipe.transform(formattedTime, 'HH:mm');
+        this.ride.departureTime = formattedDepartureTime ? formattedDepartureTime : 'Sin Hora';
+  
         this.ride.costPerKm = params['cost'];
       }
     });

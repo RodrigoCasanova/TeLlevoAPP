@@ -18,7 +18,7 @@ export class ConductorPage {
   costType: 'fixed' | 'perKm' = 'fixed';  // Tipo de costo ('fixed' o 'perKm')
 
   userId: string = '';  // ID del usuario logueado
-  carId: string = '';   // ID del auto seleccionado (lo recibimos a través de queryParams)
+  plate: string = '';   // Patente del auto seleccionada (lo recibimos a través de queryParams)
 
   constructor(
     private navCtrl: NavController,
@@ -54,10 +54,10 @@ export class ConductorPage {
   async offerTransport() {
     const isValid = await this.validateFields();
     if (!isValid) return;  // Si los campos no son válidos, no continuar
-
+  
     // Primero obtenemos el ID del usuario logueado
     await this.getUserId();
-
+  
     // Datos del viaje
     const tripData = {
       location: this.selectedLocation,
@@ -66,10 +66,10 @@ export class ConductorPage {
       cost: this.cost,
       costType: this.costType,
     };
-
-    // Ahora guardamos el viaje en Firebase
-    await this.firebaseService.saveTransportData(this.userId, this.carId, tripData);
-
+  
+    // Enviar la patente (plate) en lugar de carId
+    await this.firebaseService.saveTransportData(this.userId, this.plate, tripData);
+  
     // Mostrar una alerta de éxito
     const successAlert = await this.alertController.create({
       header: 'Éxito',
@@ -83,7 +83,7 @@ export class ConductorPage {
         }
       ]
     });
-
+  
     await successAlert.present();  // Mostrar la alerta
   }
 
@@ -92,12 +92,15 @@ export class ConductorPage {
     this.navCtrl.back();
   }
 
-  // Método para obtener el carId de los queryParams
+  // Método para obtener la patente (plate) de los queryParams
   ngOnInit() {
+    // Suscribirse a los queryParams y recibir la patente
     this.route.queryParams.subscribe(params => {
-      if (params && params['carId']) {  // Usamos la sintaxis de índice
-        this.carId = params['carId'];  // Guardamos el carId recibido
-        console.log('CarId recibido:', this.carId);
+      if (params && params['plate']) {
+        this.plate = params['plate'];  // Asignamos el valor recibido a la propiedad plate
+        console.log('Patente recibida:', this.plate);  // Esto debería loguear el valor de la patente
+      } else {
+        console.log('No se pasó la patente');  // Si no se pasa la patente
       }
     });
   }

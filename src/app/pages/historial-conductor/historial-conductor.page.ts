@@ -19,24 +19,44 @@ export class HistorialConductorPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadViajes(); // Cargar los viajes cuando el componente se inicializa
+    this.afAuth.onAuthStateChanged((user) => {
+      if (user) {
+        this.loadViajes();
+      } else {
+        console.log('Usuario no autenticado. Redirigiendo al inicio de sesión.');
+        this.navCtrl.navigateRoot('/login'); // Reemplaza '/login' con la ruta de tu página de inicio de sesión
+      }
+    });
   }
+  
 
   // Función para cargar los viajes del usuario autenticado
   async loadViajes() {
     try {
-      const user = await this.afAuth.currentUser; // Obtenemos el usuario logueado
+      const user = await this.afAuth.currentUser;
       if (user) {
-        // Llamamos al servicio Firebase para obtener los viajes del usuario logueado
         const userTransports = await this.firebaseService.getUserTransports(user.uid); 
-        this.viajes = userTransports; // Asignamos los viajes a la variable viajes
+        console.log('Datos de viajes obtenidos:', userTransports); // Para verificar los datos
+  
+        // Mapeo de datos desde Firebase a los campos que queremos mostrar en la UI
+        this.viajes = userTransports.map((viaje: any) => ({
+          id: viaje.carId || 'ID no especificado',
+          destino: viaje.location || 'Destino no especificado', // Usando "location" como el destino
+          horaSalida: new Date(viaje.startDateTime).toLocaleString() || 'Hora no especificada',
+          tarifa: viaje.cost ? `${viaje.cost} CLP` : 'Tarifa no especificada', // Usando "cost" para la tarifa
+          pasajeros: viaje.seats || 'Asientos no especificados',
+          detallesPasajeros: [] // Agrega pasajeros si tienes esta información en otro lugar
+        }));
       } else {
         console.log('No se pudo obtener el usuario actual');
       }
     } catch (error) {
-      console.error('Error al cargar los viajes:', error); // Manejo de errores
+      console.error('Error al cargar los viajes:', error);
     }
   }
+  
+  
+  
 
   // Función para controlar la expansión de los detalles de los pasajeros
   togglePassengerDetails(index: number) {

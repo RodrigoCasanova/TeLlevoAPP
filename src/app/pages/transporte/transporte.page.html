@@ -1,53 +1,57 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button class="back-button" (click)="goBack()">
-        <ion-icon slot="start" name="arrow-back"></ion-icon>
+    <ion-title>Viajes Disponibles</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Ofrecer Transporte</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- Detalles del Auto -->
-  <div>
-    <h2>Detalles del Auto</h2>
-    <p>Marca: {{ carBrand }}</p>
-    <p>Modelo: {{ carModel }}</p>
-    <p>Color: {{ carColor }}</p>
-    <p>Patente: {{ carPlate }}</p>
-  </div>
-  
+<ion-content>
   <!-- Filtro de ubicación -->
   <ion-item>
-    <ion-label>Buscar en:</ion-label>
+    <ion-label>Filtrar por ubicación</ion-label>
     <ion-select [(ngModel)]="selectedLocation" (ionChange)="filterRides()">
       <ion-select-option value="all">Todos</ion-select-option>
-      <ion-select-option value="concepcion">Concepción</ion-select-option>
-      <ion-select-option value="chiguayante">Chiguayante</ion-select-option>
-      <ion-select-option value="san_pedro">San Pedro de la Paz</ion-select-option>
+      <ion-select-option value="concepción">Concepción</ion-select-option>
+      <ion-select-option value="san-pedro-de-la-paz">San Pedro de la Paz</ion-select-option>
       <ion-select-option value="talcahuano">Talcahuano</ion-select-option>
-      <ion-select-option value="hualqui">Hualqui</ion-select-option>
-      <ion-select-option value="hualpen">Hualpén</ion-select-option>
+      <ion-select-option value="hualpén">Hualpén</ion-select-option>
+      <ion-select-option value="penco">Penco</ion-select-option>
+      <ion-select-option value="chiguayante">Chiguayante</ion-select-option>
+      <ion-select-option value="coronel">Coronel</ion-select-option>
+      <ion-select-option value="lota">Lota</ion-select-option>
+      <ion-select-option value="tomé">Tomé</ion-select-option>
+      <ion-select-option value="penco">Penco</ion-select-option>
+      <ion-select-option value="duoc-uc">Duoc UC</ion-select-option>
+      <!-- Agregar más ubicaciones si es necesario -->
     </ion-select>
   </ion-item>
 
-  <!-- Lista de viajes -->
+  <!-- Lista de viajes disponibles -->
   <ion-list>
     <ion-item *ngFor="let ride of filteredRides">
-      <ion-label>
-        <h2>{{ ride.driverName || 'Conductor Anónimo' }}</h2>
-        <p>Ubicación: {{ ride.location }}</p>
-        <p>Destino: {{ ride.destination }}</p>
-        <p>Auto: {{ carBrand }} {{ carModel }} ({{ carColor }})</p>
-        <p>Patente: {{ carPlate }}</p>
-        <p>Asientos disponibles: {{ ride.seats }}</p>
-        <p>Fecha y Hora: {{ ride.startDateTime | date: 'dd/MM/yyyy HH:mm' }}</p>
-        <p>Costo: {{ ride.cost }} {{ ride.costType === 'perKm' ? 'CLP/km' : 'CLP' }}</p>
-      </ion-label>
-      <ion-button *ngIf="ride.seats > 0" (click)="startRide(ride)" slot="end">Solicitar</ion-button>
-      <p *ngIf="ride.seats === 0" slot="end" style="color: red; font-weight: bold;">No Disponible</p>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ ride.carBrand }} {{ ride.carModel }}</ion-card-title>
+          <ion-card-subtitle>{{ ride.location }}</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <p><strong>Fecha de salida:</strong> {{ ride.startDateTime | date: 'medium' }}</p>
+          <p><strong>Asientos disponibles:</strong> {{ ride.seats }}</p>
+          <p><strong>Precio por kilómetro:</strong> {{ ride.pricePerKm | currency }}</p>
+        </ion-card-content>
+
+        <ion-button expand="full" (click)="startRide(ride)" [disabled]="ride.seats <= 0">
+          Solicitar Viaje
+        </ion-button>
+      </ion-card>
     </ion-item>
   </ion-list>
+
+  <!-- Indicador de carga -->
+  <ion-loading *ngIf="loading" message="Cargando viajes..."></ion-loading>
 </ion-content>

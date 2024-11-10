@@ -6,28 +6,24 @@
       </ion-button>
     </ion-buttons>
     <ion-title>Ruta del Pasajero</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="navigateToChat()">
-        <ion-icon name="chatbubbles"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Imagen del mapa -->
-  <div class="map-placeholder">
-    <img src="assets/img/mapa_pasajero.jpeg" alt="Ruta del Pasajero">
-  </div>
+  <!-- Mapa -->
+  <div id="map" style="height: 400px;"></div>
 
   <!-- Sección del auto -->
-  <div class="car-details">
-    <div class="car-info">
-      <p><strong>Modelo:</strong> {{ ride.carModel }}</p>
-      <p><strong>Patente:</strong> {{ ride.carPlate }}</p>
-      <p><strong>Color:</strong> {{ ride.carColor }}</p>
-    </div>
+  <!-- Sección del auto -->
+<div class="car-details">
+  <div class="car-info">
+    <p><strong>Marca:</strong> {{ carDetails?.brand }}</p>
+    <p><strong>Modelo:</strong> {{ carDetails?.model }}</p>
+    <p><strong>Patente:</strong> {{ carDetails?.plate }}</p>
+    <p><strong>Color:</strong> {{ carDetails?.color }}</p>
   </div>
+</div>
+
 
   <!-- Detalles del Viaje -->
   <ion-card>
@@ -38,31 +34,25 @@
       <ion-item>
         <ion-label>
           <h2>Ubicación del Conductor:</h2>
-          <p>{{ ride.driverLocation }}</p>
+          <p>{{ 'Duoc UC Concepcion' }}</p>
         </ion-label>
       </ion-item>
       <ion-item>
         <ion-label>
           <h2>Destino:</h2>
-          <p>{{ ride.destination }}</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h2>Asientos:</h2>
-          <p>{{ ride.uwu }}</p>
+          <p>{{ ride.location }}</p>
         </ion-label>
       </ion-item>
       <ion-item>
         <ion-label>
           <h2>Hora de Salida:</h2>
-          <p>{{ ride.departureTime }}</p>
+          <p>{{ ride.startDateTime }}</p>
         </ion-label>
       </ion-item>
       <ion-item>
         <ion-label>
           <h2>Total a Pagar:</h2>
-          <p>{{ totalCost }} CLP</p>
+          <p>{{ ride.cost }} CLP</p>
         </ion-label>
       </ion-item>
       

@@ -29,17 +29,20 @@ export class MenuAutoPage {
   // Función para cargar los autos desde Firebase
   async loadCars() {
     try {
-      const user = await this.firebaseService.currentUser; // Obtiene el usuario logueado
+      const user = await this.firebaseService.currentUser;
       if (user) {
-        this.cars = await this.firebaseService.getCarsForUser(user.uid); // Pasar el UID al servicio
-        console.log('Autos cargados desde Firebase:', this.cars); // Para depuración
+        this.cars = await this.firebaseService.getCarsForUser(user.uid);
+        this.cars.forEach(car => {
+          console.log(`Auto cargado: ${car.plate}`);  // Depuración para verificar la patente
+        });
       } else {
         console.error('Usuario no autenticado');
       }
     } catch (error) {
-      console.error('Error al cargar los autos:', error); // Manejo de errores
+      console.error('Error al cargar los autos:', error);
     }
   }
+  
   
 
   // Función para agregar un nuevo auto (navega hacia la página de auto)
@@ -92,34 +95,37 @@ export class MenuAutoPage {
 
   // Actualiza el auto seleccionado
   updateSelectedCar(car: IAuto) {
-    this.selectedCar = car; // Establece el auto seleccionado
+    this.selectedCar = car.selected ? car : null;  
     console.log('Auto seleccionado:', this.selectedCar);
   }
 
   // Función para ofrecer transporte con el auto seleccionado
   async offerTransport() {
     if (this.selectedCar) {
+      if (!this.selectedCar.plate) {
+        console.error('La patente del auto está vacía');
+        return;  // Detiene la ejecución si la patente está vacía
+      }
       // Guardar los datos del auto seleccionado en el local storage
-      await this.firebaseService.saveSelectedCar(this.selectedCar); // O usa el servicio Firebase para guardar
-      // Navegar a la página del conductor
-      this.navCtrl.navigateForward('/conductor');
+      await this.firebaseService.saveSelectedCar(this.selectedCar);
+      // Navegar a la página del conductor, pasando la patente como queryParams
+      this.navCtrl.navigateForward('/conductor', {
+        queryParams: { plate: this.selectedCar.plate }
+      });
       console.log('Ofrecer transporte para el auto seleccionado:', this.selectedCar);
     } else {
       console.error('No hay auto seleccionado para ofrecer transporte');
     }
   }
+  
+  
 
   // Función para navegar hacia atrás
   goBack() {
     this.navCtrl.back(); // Simplemente regresa a la página anterior
   }
-  selectCar(car: IAuto) {
-    this.selectedCar = car;
-    console.log('Auto seleccionado:', car);
-    // Navegar a la página de conductor y pasar el carId como parámetro
-    this.navCtrl.navigateForward('/conductor', {
-      queryParams: { carId: car.id }  // Pasar el carId a través de queryParams
-    });
-  }
+  
+  
+  
 
 }

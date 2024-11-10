@@ -5,5 +5,6 @@ export interface Ride {
     seats: number;
     costPerKm: number;
     costType: string; // 'perKm' o 'fixed'
+    carPlate?: string;
   }
   

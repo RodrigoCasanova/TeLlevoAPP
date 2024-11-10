@@ -11,10 +11,8 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Imagen del mapa -->
-  <div class="map-placeholder">
-    <img src="assets/img/map.jpeg" alt="Mapa del viaje">
-  </div>
+  <!-- Mapa de Google -->
+  <div id="map" style="height: 300px; width: 100%;"></div>
 
   <ion-card>
     <ion-card-header>
@@ -23,14 +21,14 @@
 
     <ion-card-content>
       <!-- Información del viaje -->
-      <ion-item>
+      <ion-item *ngIf="ride">
         <ion-label>
-          <h2>Conductor: {{ ride.driverName }}</h2>
-          <p>Ubicación actual: {{ ride.currentLocation }}</p>
-          <p>Destino: {{ ride.destination }}</p>
-          <p>Asientos: {{ ride.uwu }}</p>
-          <p>Hora de salida: {{ ride.departureTime }}</p>
-          <p>Tiempo estimado de llegada: {{ ride.estimatedArrival }}</p>
+          <h2>Conductor: {{ conductorName || 'Desconocido' }}</h2>
+          <p>Ubicación actual: {{ ride.destination || 'Duoc UC' }}</p>
+          <p>Destino: {{ ride.location || 'No disponible' }}</p>
+          <p>Asientos: {{ ride.seats || 'No especificado' }}</p>
+          <p>Hora de salida: {{ ride.startDateTime || 'No especificada' }}</p>
+          <p>Costo: {{ ride.cost || 'No especificado' }}</p>
         </ion-label>
       </ion-item>
 

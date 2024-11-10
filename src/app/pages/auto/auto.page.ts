@@ -1,3 +1,4 @@
+// Importaciones necesarias
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { FirebaseService } from 'src/app/services/firebase.service';
@@ -77,7 +78,6 @@ export class AutoPage {
       console.error('Todos los campos son requeridos');
     }
   }
-  
 
   goBack() {
     this.navCtrl.back();
