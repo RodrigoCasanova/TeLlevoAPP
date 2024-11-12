@@ -329,6 +329,26 @@ updateTransportStatusToReserved(rideId: string) {
   });
 }
 
+async getPassengerTransports(uid: string): Promise<any[]> {
+  try {
+    console.log('Buscando transportes para el pasajero con UID:', uid);
+    
+    // Consultamos los transportes donde el UID del pasajero está en la lista 'pasajeroIDs'
+    const querySnapshot = await this.firestore.collection('transports', ref => ref.where('pasajeroIDs', 'array-contains', uid)).get().toPromise();
+    
+    // Mapeamos los documentos de la consulta
+    const transports = querySnapshot.docs.map(doc => {
+      const data = doc.data() as { [key: string]: any };
+      return { id: doc.id, ...data };
+    });
+
+    console.log('Viajes encontrados:', transports);
+    return transports;  // Retorna los viajes que tienen al pasajero en la lista
+  } catch (error) {
+    console.error('Error al obtener los viajes del pasajero:', error);
+    throw error;
+  }
+}
   
 
   

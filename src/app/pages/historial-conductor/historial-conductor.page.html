@@ -1,45 +1,45 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Historial de Viajes</ion-title>
-  </ion-toolbar>
-</ion-header>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button (click)="goBack()">
+          <ion-icon name="arrow-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Historial de Viajes</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-<ion-content>
-  <ion-card *ngFor="let viaje of viajes; let i = index">
-    <ion-card-header>
-      <ion-card-title>Viaje a {{ viaje.destino }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-icon name="time-outline" slot="start"></ion-icon>
-        <p>Hora de salida: {{ viaje.horaSalida }}</p>
-      </ion-item>
-      <ion-item>
-        <ion-icon name="cash-outline" slot="start"></ion-icon>
-        <p>Tarifa: {{ viaje.tarifa }} CLP</p>
-      </ion-item>
-      <ion-item button (click)="togglePassengerDetails(i)">
-        <ion-icon name="people-outline" slot="start"></ion-icon>
-        <p>Número de pasajeros: {{ viaje.pasajeros }}</p>
-      </ion-item>
-
-      <ion-list *ngIf="expandedIndices.has(i)">
-        <ion-item *ngFor="let pasajero of viaje.detallesPasajeros">
-          <ion-avatar slot="start">
-            <img [src]="pasajero.foto" />
-          </ion-avatar>
-          <p>{{ pasajero.nombre }}</p>
+  <ion-content>
+    <ion-card *ngFor="let viaje of viajes; let i = index">
+      <ion-card-header>
+        <ion-card-title>Viaje a {{ viaje.destino }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-icon name="time-outline" slot="start"></ion-icon>
+          <p>Hora de salida: {{ viaje.horaSalida }}</p>
         </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+        <ion-item>
+          <ion-icon name="cash-outline" slot="start"></ion-icon>
+          <p>Tarifa: {{ viaje.tarifa }} CLP</p>
+        </ion-item>
+        <ion-item button (click)="togglePassengerDetails(i)">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <p>Número de pasajeros: {{ viaje.pasajeros }}</p>
+        </ion-item>
 
-  <ion-content *ngIf="viajes.length === 0" class="ion-padding">
-    <p>No hay viajes registrados en tu historial.</p>
+        <ion-list *ngIf="expandedIndices.has(i)">
+          <ion-item *ngFor="let pasajero of viaje.detallesPasajeros">
+            <ion-avatar slot="start">
+              <img [src]="pasajero.foto" />
+            </ion-avatar>
+            <p>{{ pasajero.nombre }}</p>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-content *ngIf="viajes.length === 0" class="ion-padding">
+      <p>No hay viajes registrados en tu historial.</p>
+    </ion-content>
   </ion-content>
-</ion-content>
