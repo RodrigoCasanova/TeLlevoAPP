@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router'; // Incluir Router
-import { FirebaseService } from 'src/app/services/firebase.service'; // Asegúrate de importar tu servicio de Firebase
+import { ActivatedRoute, Router } from '@angular/router';
+import { FirebaseService } from 'src/app/services/firebase.service';
 
 declare var google: any;
 
@@ -13,52 +13,43 @@ declare var google: any;
 export class ViajePasajeroPage implements OnInit {
   ride: any;
   conductorName: string = '';
-  carDetails = {
-    brand: 'Toyota',
-    model: 'Corolla',
-    licensePlate: 'AB123CD',
-    color: 'Blanco',
-  };
   startPosition = { lat: -36.79448680693151, lng: -73.06436871720969 }; // Ubicación de inicio (Duoc UC)
   endPosition: any;
   map: any;
   directionsService: any;
   directionsRenderer: any;
+  hasActiveTrip: boolean = false; // Nueva variable para verificar si el usuario tiene un viaje activo
 
   constructor(
     private navCtrl: NavController,
     private alertController: AlertController,
     private route: ActivatedRoute,
-    private router: Router, // Agregar Router aquí
-    private firebaseService: FirebaseService // Inyectar servicio de Firebase
+    private router: Router,
+    private firebaseService: FirebaseService
   ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params && params['ride']) {
         this.ride = JSON.parse(params['ride']);
-        console.log(this.ride); // Verifica los valores de 'ride'
-        this.updateDestinationCoordinates(this.ride.location); // Actualiza las coordenadas del destino
-        this.initMap(); // Inicializa el mapa
-
-        // Obtener nombre y apellido del conductor a través del userId
+        this.updateDestinationCoordinates(this.ride.location);
+        this.initMap();
         this.getConductorDetails(this.ride.userId);
+        this.checkActiveTrip();  // Verifica si ya hay un viaje activo
       }
     });
   }
 
-  // Obtener detalles del conductor desde Firebase
   async getConductorDetails(userId: string) {
     try {
-      const userData = await this.firebaseService.getUserData(userId); // Obtener los datos del usuario
+      const userData = await this.firebaseService.getUserData(userId);
       if (userData) {
-        this.conductorName = `${userData.nombre} ${userData.apellido || ''}`; // Combinar nombre y apellido
+        this.conductorName = `${userData.nombre} ${userData.apellido || ''}`;
       } else {
-        this.conductorName = 'Conductor desconocido'; // En caso de no encontrar al conductor
+        this.conductorName = 'Conductor desconocido';
       }
     } catch (error) {
-      console.error('Error al obtener datos del conductor:', error);
-      this.conductorName = 'Conductor desconocido'; // Si hay error, mostrar desconocido
+      this.conductorName = 'Conductor desconocido';
     }
   }
 
@@ -131,16 +122,80 @@ export class ViajePasajeroPage implements OnInit {
     });
   }
 
-  startTrip() {
-    // Pasar los datos del viaje a la página RutaPasajeroPage
-    this.router.navigate(['/ruta-pasajero'], {
-      queryParams: {
-        ride: JSON.stringify(this.ride),
-      },
-    });
+  // Método para verificar si el usuario ya tiene un viaje activo
+  // Método para verificar si el usuario ya tiene un viaje activo
+  async checkActiveTrip() {
+    try {
+      // Asegúrate de pasar el userId real, por ejemplo, el ID del pasajero actual
+      const userId = this.ride.pasajeroIDs; // Reemplaza esto con el ID correcto, tal vez 'this.ride.pasajeroIDs[0]' si estás buscando al primer pasajero.
+      const activeTrip = await this.firebaseService.getActiveTripForUser(userId);
+      
+      if (activeTrip) {
+        this.hasActiveTrip = true; // El usuario tiene un viaje activo
+      } else {
+        this.hasActiveTrip = false; // El usuario no tiene un viaje activo
+      }
+    } catch (error) {
+      console.error('Error al verificar viaje activo:', error);
+      // Mostrar alerta si ocurre un error
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Hubo un problema al verificar tu viaje activo. Por favor, intenta nuevamente.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+    }
   }
+  
+
+
+  async startTrip() {
+    if (this.hasActiveTrip) {
+      // Si el usuario tiene un viaje activo, mostramos un mensaje de alerta
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Ya tienes un viaje agendado. No puedes reservar otro hasta que lo hayas completado.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+      return;
+    }
+  
+    if (this.ride.seats > 0) {
+      // Disminuir los asientos disponibles en la base de datos
+      this.ride.seats -= 1;
+  
+      // Agregar el ID del pasajero al viaje
+      this.ride.pasajeroIDs = this.ride.pasajeroIDs || []; // Inicializa si no existe
+      
+  
+      try {
+        // Actualiza los datos del viaje en la base de datos (colección transports)
+        await this.firebaseService.updateTransportSeatsAndPassengers(this.ride.id, this.ride.seats, this.ride.pasajeroIDs);
+  
+        // Navegar a la página de ruta para el pasajero, pasando los detalles del viaje y los pasajeros
+        this.router.navigate(['/ruta-pasajero'], {
+          queryParams: {
+            ride: JSON.stringify(this.ride),
+          },
+        });
+      } catch (error) {
+        console.error('Error al actualizar los asientos y agregar al pasajero:', error);
+      }
+    } else {
+      // Si no hay asientos disponibles, muestra un mensaje de error
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'No hay asientos disponibles para este viaje.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+    }
+  }
+  
+  
 
   goBack() {
-    this.navCtrl.back(); // Regresa a la página anterior
+    this.navCtrl.back();
   }
 }

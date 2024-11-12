@@ -45,6 +45,12 @@ export class TransportePage implements OnInit {
           next: (allTrips: any[]) => {
             // Filtrar los viajes para excluir los del usuario actual
             this.rides = allTrips.filter(ride => ride.userId !== user.uid); 
+            
+            // Mostrar el ID de cada viaje en la consola
+            this.rides.forEach(ride => {
+              console.log('ID del transporte:', ride.id);  // Aquí se muestra el ID de cada viaje
+            });
+  
             this.filterRides(); // Filtrar los viajes después de excluir los del usuario actual
           },
           error: (error) => {
@@ -59,6 +65,7 @@ export class TransportePage implements OnInit {
       console.error('Error al obtener los datos del usuario:', error);
     }
   }
+  
   
   
   
@@ -80,7 +87,9 @@ export class TransportePage implements OnInit {
 
   // Método para manejar la confirmación de solicitud de viaje
   async startRide(ride: any) {
+    
     const alert = await this.alertController.create({
+      
       header: 'Confirmación',
       message: '¿Estás seguro de que quieres solicitar este viaje?',
       buttons: [

@@ -1,4 +1,5 @@
 export interface Ride {
+    id: string;
     destination: string;
     startLocation: string;
     departureTime: Date;

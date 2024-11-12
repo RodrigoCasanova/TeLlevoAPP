@@ -40,30 +40,7 @@
   </ion-card>
 
   <!-- Lista de Pasajeros -->
-  <ion-list>
-    <ion-list-header>
-      <ion-label>Pasajeros que Solicitaron el Viaje</ion-label>
-    </ion-list-header>
-
-    <ion-item *ngFor="let passenger of passengers">
-      <ion-avatar slot="start">
-        <ion-img [src]="passenger.image"></ion-img>
-      </ion-avatar>
-      <ion-label>
-        <h2>{{ passenger.name }}</h2>
-        <p>Ubicación: {{ passenger.location }}</p>
-        <p>Status: {{ passenger.status }}</p>
-      </ion-label>
-      <!-- Botones de Confirmar y Rechazar -->
-      <ion-button fill="clear" color="success" [disabled]="ride.availableSeats <= 0" (click)="confirmPassenger(passenger)">
-        <ion-icon name="checkmark-circle-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" color="danger" (click)="rejectPassenger(passenger)">
-        <ion-icon name="close-circle-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
-    
-  </ion-list>
+  
 
   <!-- Botón Programar Viaje -->
   <ion-button expand="full" color="primary" [disabled]="!canScheduleTrip()" (click)="scheduleTrip()">

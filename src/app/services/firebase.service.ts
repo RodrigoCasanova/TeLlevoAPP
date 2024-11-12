@@ -6,6 +6,7 @@ import { IAuto } from '../interfaces/iauto';
 import { doc, deleteDoc } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';  // Importar 'map' de RxJS
 import { Observable } from 'rxjs';
+import { NavController, AlertController } from '@ionic/angular';
 
 
 
@@ -13,8 +14,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FirebaseService {
+  afs: any;
 
   constructor(
+    private navCtrl: NavController,
+    private alertController: AlertController,
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore
   ) { }
@@ -148,15 +152,16 @@ export class FirebaseService {
   }
   async saveTransportData(userId: string, plate: string, transportData: any) {
     try {
-      const transportRef = this.firestore.collection('transports').doc();
-      await transportRef.set({
+      // Crear el documento de transporte sin especificar un ID, lo cual genera un ID automáticamente
+      const transportRef = await this.firestore.collection('transports').add({
         userId,
         plate,
         ...transportData,
         createdAt: new Date().toISOString(),
       });
   
-      console.log('Transporte guardado con éxito');
+      console.log('Transporte guardado con éxito con ID:', transportRef.id);
+      return transportRef.id; // Devuelve el ID del transporte recién creado
     } catch (error) {
       console.error('Error al guardar el transporte en Firestore:', error);
       throw error;
@@ -165,9 +170,11 @@ export class FirebaseService {
   
   
   
+  
   // FirebaseService
   async getUserTransports(uid: string): Promise<any[]> {
     try {
+      console.log('Transporte guardado con éxito con ID:', uid);
       const querySnapshot = await this.firestore.collection('transports', ref => ref.where('userId', '==', uid)).get().toPromise();
       return querySnapshot.docs.map(doc => {
         const data = doc.data() as { [key: string]: any };
@@ -180,10 +187,22 @@ export class FirebaseService {
   }
   
   getAllRides() {
-    return this.firestore.collection('transports').get().pipe(
-      map(snapshot => snapshot.docs.map(doc => doc.data()))
+    return this.firestore.collection('transports').snapshotChanges().pipe(
+      map(changes => 
+        changes.map(doc => {
+          const data = doc.payload.doc.data();
+          const id = doc.payload.doc.id;
+  
+          if (data && typeof data === 'object') {
+            return { id, ...data };  // Solo hace el spread si data es un objeto
+          }
+          return { id, data }; // Si no es un objeto, solo retorna el ID y los datos crudos
+        })
+      )
     );
   }
+  
+  
   
   async getConductorNameById(uid: string): Promise<{ nombre: string, apellido: string } | null> {
     try {
@@ -216,6 +235,101 @@ export class FirebaseService {
   
     return this.firestore.collection('selectedCars', ref => ref.where('plate', '==', cleanedPlate)).valueChanges();
   }
+
+  async updateTransportStatus(transportId: string, statusData: any) {
+    try {
+      await this.firestore.collection('transports').doc(transportId).update(statusData);
+      console.log('Estado del transporte actualizado con éxito');
+    } catch (error) {
+      console.error('Error al actualizar el estado del transporte', error);
+      throw error;
+    }
+  }
+  
+  
+  async updateTransportSeatsAndPassengers(transportId: string, newSeats: number, pasajeroIDs: string[]) {
+    try {
+      // Obtener el usuario logueado
+      const currentUser = await this.afAuth.currentUser;
+      if (!currentUser) {
+        throw new Error('No hay un usuario logueado');
+      }
+  
+      console.log('ID del transporte:', transportId);
+      const transportRef = this.firestore.collection('transports').doc(transportId);
+      const doc = await transportRef.get().toPromise();
+  
+      if (!doc.exists) {
+        throw new Error('El documento del transporte no existe');
+      }
+  
+      // Verificar si el usuario ya está en la lista de pasajeros
+      if (pasajeroIDs.includes(currentUser.uid)) {
+        // Mostrar una alerta si el usuario ya ha solicitado este viaje
+        const alert = await this.alertController.create({
+          header: 'Viaje ya solicitado',
+          message: 'Ya has solicitado este viaje previamente. No puedes reservarlo nuevamente.',
+          buttons: ['OK'],
+        });
+        await alert.present();
+        throw new Error('Este pasajero ya ha solicitado este viaje');
+      }
+  
+      // Agregar el ID del usuario logueado a la lista de pasajeros
+      pasajeroIDs.push(currentUser.uid);
+  
+      // Actualizar los asientos y la lista de pasajeros
+      await transportRef.update({
+        seats: newSeats,
+        pasajeroIDs: pasajeroIDs,  // Actualiza la lista de pasajeros con el nuevo ID
+      });
+  
+      console.log('Asientos y pasajeros del transporte actualizados correctamente');
+    } catch (error) {
+      console.error('Error al actualizar los asientos y los pasajeros del transporte:', error);
+      // Mostrar alerta de error
+      
+
+      throw error;
+    }
+  }
+  
+  
+  getActiveTripForUser(userId: string): Promise<any> {
+    return this.firestore
+      .collection('transports', ref => ref.where('userId', '==', userId).where('status', '==', 'active'))
+      .get()
+      .toPromise()
+      .then(querySnapshot => {
+        return querySnapshot.empty ? null : querySnapshot.docs[0].data(); // Retorna el primer viaje activo
+      });
+  }
+  
+  
+
+
+  updateTransportStatusToActive(rideId: string, userId: string) {
+    return this.firestore.collection('transports').doc(rideId).update({
+      status: 'active',
+      userId: userId, // Asociamos el viaje al usuario
+    });
+  }
+  
+  updateTransportStatusToCompleted(rideId: string) {
+    return this.firestore.collection('transports').doc(rideId).update({
+      status: 'completed',
+    });
+  }
+
+  // FirebaseService
+updateTransportStatusToReserved(rideId: string) {
+  const rideRef = this.afs.collection('transports').doc(rideId);
+  return rideRef.update({
+    status: 'reserved', // Cambia el estado a "reservado" o el que prefieras
+  });
+}
+
+  
 
   
 

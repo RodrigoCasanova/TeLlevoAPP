@@ -82,7 +82,8 @@ export class ViajesPage implements OnInit {
           startLocation: selectedTransport.location,
           destination: 'Duoc UC Concepcion',  // O lo que sea el destino
           departureTime: selectedTransport.startDateTime,
-          cost: selectedTransport.cost
+          cost: selectedTransport.cost,
+          availableSeats: selectedTransport.seats // Aquí pasamos los asientos disponibles
         },
       });
     }
