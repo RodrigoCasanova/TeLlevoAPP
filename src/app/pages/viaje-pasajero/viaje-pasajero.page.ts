@@ -139,7 +139,7 @@ export class ViajePasajeroPage implements OnInit {
       
     
   }
-  
+  //listo
 
 
   async startTrip() {
