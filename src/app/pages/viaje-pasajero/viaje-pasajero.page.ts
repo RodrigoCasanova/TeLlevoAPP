@@ -144,7 +144,6 @@ export class ViajePasajeroPage implements OnInit {
 
   async startTrip() {
     if (this.hasActiveTrip) {
-      // Si el usuario tiene un viaje activo, mostramos un mensaje de alerta
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'Ya tienes un viaje agendado. No puedes reservar otro hasta que lo hayas completado.',
@@ -155,28 +154,38 @@ export class ViajePasajeroPage implements OnInit {
     }
   
     if (this.ride.seats > 0) {
-      // Disminuir los asientos disponibles en la base de datos
       this.ride.seats -= 1;
-  
-      // Agregar el ID del pasajero al viaje
-      this.ride.pasajeroIDs = this.ride.pasajeroIDs || []; // Inicializa si no existe
+      this.ride.pasajeroIDs = this.ride.pasajeroIDs || [];
       
+      const currentUser = await this.firebaseService.currentUser; // Cambié el acceso a currentUser como propiedad.
+      if (currentUser) {
+        const userData = await this.firebaseService.getUserData(currentUser.uid);
+        
+        if (userData) {
+          // Añadir el nombre del pasajero al viaje
+          this.ride.pasajeroIDs.push({
+            id: currentUser.uid,
+            name: `${userData.nombre} ${userData.apellido}`,
+          });
   
-      try {
-        // Actualiza los datos del viaje en la base de datos (colección transports)
-        await this.firebaseService.updateTransportSeatsAndPassengers(this.ride.id, this.ride.seats, this.ride.pasajeroIDs);
+          try {
+            await this.firebaseService.updateTransportSeatsAndPassengers(this.ride.id, this.ride.seats, this.ride.pasajeroIDs);
+            
+            // Enviar notificación al conductor
+          await this.sendNotificationToConductor(this.ride);
+
   
-        // Navegar a la página de ruta para el pasajero, pasando los detalles del viaje y los pasajeros
-        this.router.navigate(['/ruta-pasajero'], {
-          queryParams: {
-            ride: JSON.stringify(this.ride),
-          },
-        });
-      } catch (error) {
-        console.error('Error al actualizar los asientos y agregar al pasajero:', error);
+            this.router.navigate(['/ruta-pasajero'], {
+              queryParams: {
+                ride: JSON.stringify(this.ride),
+              },
+            });
+          } catch (error) {
+            console.error('Error al actualizar los asientos y agregar al pasajero:', error);
+          }
+        }
       }
     } else {
-      // Si no hay asientos disponibles, muestra un mensaje de error
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'No hay asientos disponibles para este viaje.',
@@ -185,6 +194,43 @@ export class ViajePasajeroPage implements OnInit {
       await alert.present();
     }
   }
+  
+  
+  async sendNotificationToConductor(ride: any) {
+    // Obtener los datos del conductor usando el userId del ride
+    const conductorId = ride.userId; // El conductor es el que tiene el userId en el viaje
+    const conductorData = await this.firebaseService.getUserData(conductorId);
+    
+    if (conductorData?.fcmToken) {
+      // Obtener el nombre del pasajero
+      const passengerIds = ride.pasajeroIDs; // Lista de IDs de los pasajeros
+      
+      // Aquí asumimos que solo hay un pasajero para simplificar, pero puedes recorrer el array si hay más de un pasajero
+      const passengerId = passengerIds[0]; // Obtener el primer ID del pasajero
+      const passengerData = await this.firebaseService.getUserData(passengerId); // Obtener datos del pasajero
+      
+      const passengerName = passengerData ? `${passengerData.nombre} ${passengerData.apellido || ''}` : 'Pasajero desconocido';
+      
+      // Crear el mensaje de notificación
+      const message = {
+        notification: {
+          title: 'Nuevo pasajero reservado',
+          body: `El pasajero ${passengerName} ha reservado tu viaje.`,
+        },
+        to: conductorData.fcmToken, // El token FCM del conductor
+      };
+  
+      try {
+        await this.firebaseService.sendPushNotification(message); // Enviar la notificación
+      } catch (error) {
+        console.error('Error al enviar la notificación:', error);
+      }
+    } else {
+      console.error('No se encontró el token FCM del conductor');
+    }
+  }
+  
+  
   
   
 

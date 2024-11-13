@@ -7,6 +7,7 @@ import { doc, deleteDoc } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';  // Importar 'map' de RxJS
 import { Observable } from 'rxjs';
 import { NavController, AlertController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';  // Importar el archivo de entorno
 
 
 
@@ -54,18 +55,23 @@ export class FirebaseService {
 
   async saveUserData(uid: string, userData: Usuario): Promise<void> {
     try {
+      // Verifica si fcmToken existe en los datos del usuario antes de guardarlos
+      if (userData.fcmToken) {
+        console.log(`Guardando fcmToken para el usuario ${uid}`);
+      } else {
+        console.log(`No se encontró fcmToken para el usuario ${uid}`);
+      }
+  
       // Usamos el UID del usuario como ID del documento en Firestore
-
-
-
-
-      await this.firestore.collection('users').doc(uid).set(userData);
+      await this.firestore.collection('users').doc(uid).set(userData, { merge: true });
+  
       console.log('Usuario guardado en Firestore');
     } catch (error) {
       console.error('Error al guardar en Firestore: ', error);
       throw error;
     }
   }
+  
 
 
   // Login de usuario
@@ -323,6 +329,43 @@ async getPassengerTransports(uid: string): Promise<any[]> {
     throw error;
   }
 }
+
+// FirebaseService
+
+async sendPushNotification(message: any): Promise<void> {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `key=${environment.fcmServerKey}`  // Usar la clave FCM desde el archivo de entorno
+  };
+
+  const body = JSON.stringify(message);
+
+  try {
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: headers,
+      body: body,
+    });
+    const data = await response.json();
+    console.log('Notificación enviada:', data);
+  } catch (error) {
+    console.error('Error al enviar la notificación:', error);
+  }
+}
+
+// Al loguearse el conductor o cuando se registre, guarda su token de FCM.
+async saveFCMToken(userId: string, token: string) {
+  try {
+    await this.firestore.collection('users').doc(userId).update({
+      fcmToken: token,
+    });
+    console.log('Token de FCM guardado correctamente');
+  } catch (error) {
+    console.error('Error al guardar el token FCM:', error);
+  }
+}
+
+
   
 
   

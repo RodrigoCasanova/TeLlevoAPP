@@ -5,5 +5,6 @@ export interface Usuario {
     apellido: string;
     correo: string; // Nuevo campo
     profileImage?: string; // Añadir esta propiedad como opcional
+    fcmToken?: string; 
   }
   
