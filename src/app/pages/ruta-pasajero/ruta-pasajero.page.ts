@@ -36,13 +36,18 @@ export class RutaPasajeroPage implements OnInit {
         console.log(this.ride);
         this.updateDestinationCoordinates(this.ride.location);
 
+        // Guardar los datos del viaje en localStorage
+        localStorage.setItem('selectedRide', JSON.stringify(this.ride));
+
         // Llamar a la función para obtener detalles del auto usando la patente
         this.getSelectedCarByPlate(this.ride.plate).subscribe(
           (data) => {
             console.log('Datos obtenidos:', data);
-            // Aquí puedes asignar los datos obtenidos a la variable `carDetails`
             if (data && data.length > 0) {
               this.carDetails = data[0]; // Asumimos que `data` es un array y tomamos el primer elemento
+
+              // Guardar los detalles del auto en localStorage
+              localStorage.setItem('carDetails', JSON.stringify(this.carDetails));
             } else {
               console.error('No se encontraron detalles para la patente');
             }

@@ -65,10 +65,6 @@ export class TransportePage implements OnInit {
       console.error('Error al obtener los datos del usuario:', error);
     }
   }
-  
-  
-  
-  
 
   // Filtrar los viajes disponibles por ubicación
   filterRides() {
@@ -83,13 +79,10 @@ export class TransportePage implements OnInit {
     });
     this.filteredRides = filtered; // Asigna los viajes filtrados
   }
-  
 
   // Método para manejar la confirmación de solicitud de viaje
   async startRide(ride: any) {
-    
     const alert = await this.alertController.create({
-      
       header: 'Confirmación',
       message: '¿Estás seguro de que quieres solicitar este viaje?',
       buttons: [
@@ -114,6 +107,9 @@ export class TransportePage implements OnInit {
                 {
                   text: 'Ir al Viaje',
                   handler: () => {
+                    // Guardar la solicitud de viaje en localStorage
+                    localStorage.setItem('requestedRide', JSON.stringify(ride));
+
                     // Redirigir a la página de detalles del viaje y pasar los datos
                     this.navCtrl.navigateForward('/viaje-pasajero', {
                       queryParams: { ride: JSON.stringify(ride) },
@@ -136,5 +132,4 @@ export class TransportePage implements OnInit {
   goBack() {
     this.navCtrl.back();
   }
-
 }
