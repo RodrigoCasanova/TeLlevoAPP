@@ -8,7 +8,7 @@ import { NavController } from '@ionic/angular';
 @Component({
   selector: 'app-viaje-conductor',
   templateUrl: './viaje-conductor.page.html',
-  styleUrls: ['./viaje-conductor.page.scss'],
+  styleUrls: ['./viaje-conductor.page.scss'],  
 })
 export class ViajeConductorPage implements OnInit {
   // Datos del viaje
@@ -62,6 +62,9 @@ export class ViajeConductorPage implements OnInit {
     
         this.ride.costPerKm = params['cost'];
         this.ride.availableSeats = parseInt(params['availableSeats'], 10);  // Asigna los asientos disponibles
+
+        // Guardar datos en localStorage
+        localStorage.setItem('rideData', JSON.stringify(this.ride));
       }
     });
   }
@@ -111,4 +114,3 @@ export class ViajeConductorPage implements OnInit {
     await alert.present();
   }
 }
-  

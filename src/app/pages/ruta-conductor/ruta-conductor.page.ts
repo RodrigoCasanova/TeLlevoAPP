@@ -13,8 +13,6 @@ export class RutaConductorPage implements OnInit {
   ride: any = {
     startLocation: '', // Aquí es donde se asigna el destino
   };
-  
-  
 
   startPosition = { lat: -36.79448680693151, lng: -73.06436871720969 }; // Posición inicial
   endPosition: any;
@@ -35,6 +33,9 @@ export class RutaConductorPage implements OnInit {
         // Asignamos el 'destination' a 'startLocation'
         this.ride.startLocation = params['destination'];  // 'destination' es el 'startLocation' del viaje conductor
         this.updateDestinationCoordinates(this.ride.startLocation); // Actualiza las coordenadas del destino
+
+        // Guardar el viaje en localStorage
+        localStorage.setItem('ride', JSON.stringify(this.ride));
       }
     });
 
@@ -128,6 +129,9 @@ export class RutaConductorPage implements OnInit {
   selectSuggestion(suggestion: string) {
     this.ride.startLocation = suggestion;
     this.updateDestinationCoordinates(suggestion); // Actualiza el destino y calcula la ruta
+
+    // Actualiza el almacenamiento en localStorage al seleccionar una sugerencia
+    localStorage.setItem('ride', JSON.stringify(this.ride));
   }
 
   // Función de "Go Back" (volver atrás)

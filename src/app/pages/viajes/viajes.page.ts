@@ -66,6 +66,9 @@ export class ViajesPage implements OnInit {
           seats: transport.seats,
           startDateTime: this.datePipe.transform(transport.startDateTime, 'dd/MM/yyyy HH:mm') || 'Sin Hora', // Formateamos la fecha
         }));
+        
+        // Guarda los viajes en localStorage
+        localStorage.setItem('userTransports', JSON.stringify(this.userTransports));
       }
     } catch (error) {
       console.error('Error al cargar los viajes:', error);
