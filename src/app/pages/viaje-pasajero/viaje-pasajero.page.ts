@@ -125,7 +125,7 @@ export class ViajePasajeroPage implements OnInit {
   // Método para verificar si el usuario ya tiene un viaje activo
   // Método para verificar si el usuario ya tiene un viaje activo
   async checkActiveTrip() {
-    try {
+    
       // Asegúrate de pasar el userId real, por ejemplo, el ID del pasajero actual
       const userId = this.ride.pasajeroIDs; // Reemplaza esto con el ID correcto, tal vez 'this.ride.pasajeroIDs[0]' si estás buscando al primer pasajero.
       const activeTrip = await this.firebaseService.getActiveTripForUser(userId);
@@ -135,16 +135,9 @@ export class ViajePasajeroPage implements OnInit {
       } else {
         this.hasActiveTrip = false; // El usuario no tiene un viaje activo
       }
-    } catch (error) {
-      console.error('Error al verificar viaje activo:', error);
-      // Mostrar alerta si ocurre un error
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'Hubo un problema al verificar tu viaje activo. Por favor, intenta nuevamente.',
-        buttons: ['OK'],
-      });
-      await alert.present();
-    }
+    
+      
+    
   }
   
 

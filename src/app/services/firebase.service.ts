@@ -224,17 +224,11 @@ export class FirebaseService {
   
   // En FirebaseService
 
-  getSelectedCarByPlate(plate: string): Observable<any> {
-    const cleanedPlate = String(plate).trim();
-    console.log('Patente limpia:', cleanedPlate);
-  
-    if (!cleanedPlate) {
-      console.error('La patente es inválida');
-      return new Observable(); // Si la patente está vacía o inválida, devuelve un observable vacío
-    }
-  
-    return this.firestore.collection('selectedCars', ref => ref.where('plate', '==', cleanedPlate)).valueChanges();
+  getSelectedCarByPlate(plate: string) {
+    return this.firestore.collection('selectedCars', ref => ref.where('plate', '==', plate)).valueChanges() as Observable<IAuto[]>;
   }
+  
+  
 
   async updateTransportStatus(transportId: string, statusData: any) {
     try {
@@ -308,26 +302,6 @@ export class FirebaseService {
   
 
 
-  updateTransportStatusToActive(rideId: string, userId: string) {
-    return this.firestore.collection('transports').doc(rideId).update({
-      status: 'active',
-      userId: userId, // Asociamos el viaje al usuario
-    });
-  }
-  
-  updateTransportStatusToCompleted(rideId: string) {
-    return this.firestore.collection('transports').doc(rideId).update({
-      status: 'completed',
-    });
-  }
-
-  // FirebaseService
-updateTransportStatusToReserved(rideId: string) {
-  const rideRef = this.afs.collection('transports').doc(rideId);
-  return rideRef.update({
-    status: 'reserved', // Cambia el estado a "reservado" o el que prefieras
-  });
-}
 
 async getPassengerTransports(uid: string): Promise<any[]> {
   try {
