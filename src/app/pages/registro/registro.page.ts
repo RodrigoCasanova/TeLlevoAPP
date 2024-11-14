@@ -49,7 +49,7 @@ export class RegistroPage implements OnInit {
 
   async registrar() {
     if (!this.validateEmail(this.usr.correo)) {
-      this.presentToast('El correo debe ser de la universidad.', 'danger');
+      this.presentToast('El correo debe pertenecer a duocuc.', 'danger');
       return;
     }
 

@@ -1,8 +1,7 @@
-// Importaciones necesarias
 import { Component } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { FirebaseService } from 'src/app/services/firebase.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';  // Importar AngularFireAuth
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-auto',
@@ -39,7 +38,8 @@ export class AutoPage {
   constructor(
     private navCtrl: NavController, 
     private firebaseService: FirebaseService,
-    private afAuth: AngularFireAuth  // Inyectar AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private alertController: AlertController
   ) {}
 
   updateModels(event: any) {
@@ -47,35 +47,55 @@ export class AutoPage {
     this.models = this.brandModels[selectedBrand] || [];
   }
 
-  // Guardar el auto en Firestore
+  // Método para mostrar una alerta con el mensaje de error
+  async showAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Error',
+      message: message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  // Guardar el auto en Firestore con validación de patente
   async saveCar() {
-    if (this.car.brand && this.car.model && this.car.year && this.car.color && this.car.plate) {
-      try {
-        const userCredential = await this.afAuth.currentUser; // Obtener el usuario logueado
-        if (userCredential) {
-          const uid = userCredential.uid;  // Obtener el UID del usuario logueado
-  
-          const newCar = {
-            brand: this.car.brand,
-            model: this.car.model,
-            year: this.car.year,
-            color: this.car.color,
-            plate: this.car.plate,
-            description: this.car.description,
-          };
-  
-          // Llamar al servicio de Firebase para guardar el auto con el UID del usuario
-          await this.firebaseService.saveCarData(uid, newCar);
-          console.log('Auto guardado en Firebase');
-          this.navCtrl.back();  // Regresar a la página anterior
-        } else {
-          console.error('Usuario no logueado');
-        }
-      } catch (error) {
-        console.error('Error al guardar el auto en Firebase: ', error);
+    // Expresión regular para validar el formato de la patente chilena
+    const platePattern = /^[A-Z]{2}\d{4}$|^[A-Z]{2}\d{3}[A-Z]$/;
+
+    // Validación de campos
+    if (!this.car.brand || !this.car.model || !this.car.year || !this.car.color || !this.car.plate) {
+      this.showAlert('Todos los campos son requeridos');
+      return;
+    }
+
+    // Validación de formato de patente
+    if (!platePattern.test(this.car.plate.toUpperCase())) {
+      this.showAlert('La patente debe tener un formato válido, como "AB1234" o "AB123C"');
+      return;
+    }
+
+    try {
+      const userCredential = await this.afAuth.currentUser;
+      if (userCredential) {
+        const uid = userCredential.uid;
+
+        const newCar = {
+          brand: this.car.brand,
+          model: this.car.model,
+          year: this.car.year,
+          color: this.car.color,
+          plate: this.car.plate,
+          description: this.car.description,
+        };
+
+        await this.firebaseService.saveCarData(uid, newCar);
+        console.log('Auto guardado en Firebase');
+        this.navCtrl.back();
+      } else {
+        console.error('Usuario no logueado');
       }
-    } else {
-      console.error('Todos los campos son requeridos');
+    } catch (error) {
+      console.error('Error al guardar el auto en Firebase: ', error);
     }
   }
 

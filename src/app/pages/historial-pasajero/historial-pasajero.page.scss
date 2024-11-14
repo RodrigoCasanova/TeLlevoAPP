@@ -1,8 +1,40 @@
+ion-card-header {
+  font-size: 16px;
+}
+
+
+ion-item {
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+
+ion-label {
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  ion-card-header {
+    font-size: 14px;
+  }
+
+  ion-card-content {
+    font-size: 12px;
+  }
+
+  ion-label {
+    font-size: 12px;
+  }
+}
 ion-card {
-    margin: 10px;
-  }
-  
-  ion-avatar {
-    margin-right: 10px;
-  }
-  
+  display: block;
+  width: 100%;
+}
+
+ion-card-content {
+  overflow: visible;
+}
+
+ion-spinner {
+  display: block;
+  margin: 0 auto;
+}

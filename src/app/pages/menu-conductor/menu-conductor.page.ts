@@ -29,6 +29,6 @@ export class MenuConductorPage {
     this.navCtrl.navigateForward('/ruta-conductor'); // Asegúrate de tener la ruta configurada
   }
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/home');
   }
 }

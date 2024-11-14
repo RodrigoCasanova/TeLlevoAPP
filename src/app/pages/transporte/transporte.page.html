@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Viajes Disponibles</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="start">
       <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -32,25 +32,30 @@
 
   <!-- Lista de viajes disponibles -->
   <ion-list>
-    <ion-item *ngFor="let ride of filteredRides">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>{{ ride.carBrand }} {{ ride.carModel }}</ion-card-title>
-          <ion-card-subtitle>{{ ride.location }}</ion-card-subtitle>
-        </ion-card-header>
+    <ion-card *ngFor="let ride of filteredRides" class="ride-card">
+      <ion-card-header class="ride-header">
+        <ion-card-title>{{ ride.carBrand }} {{ ride.carModel }}</ion-card-title>
+        <ion-card-subtitle>{{ ride.location }}</ion-card-subtitle>
+      </ion-card-header>
 
-        <ion-card-content>
-          <p><strong>Fecha de salida:</strong> {{ ride.startDateTime | date: 'medium' }}</p>
-          <p><strong>Asientos disponibles:</strong> {{ ride.seats }}</p>
-          <p><strong>Precio por kilómetro:</strong> {{ ride.pricePerKm | currency }}</p>
-        </ion-card-content>
+      <ion-card-content>
+        <p><strong>Fecha de salida:</strong> {{ ride.startDateTime | date: 'medium' }}</p>
+        <p><strong>Asientos disponibles:</strong> {{ ride.seats }}</p>
+        <p><strong>Precio por kilómetro:</strong> {{ ride.pricePerKm | currency }}</p>
+      </ion-card-content>
 
-        <ion-button expand="full" (click)="startRide(ride)" [disabled]="ride.seats <= 0">
-          Solicitar Viaje
-        </ion-button>
-      </ion-card>
-    </ion-item>
+      <ion-button expand="full" color="success" (click)="startRide(ride)" [disabled]="ride.seats <= 0">
+        Solicitar Viaje
+      </ion-button>
+    </ion-card>
   </ion-list>
+
+  <!-- Botón para ir al Home -->
+  <ion-footer class="ion-padding">
+    <ion-button expand="block" color="primary" (click)="goHome()">
+      Ir al Home
+    </ion-button>
+  </ion-footer>
 
   <!-- Indicador de carga -->
   <ion-loading *ngIf="loading" message="Cargando viajes..."></ion-loading>

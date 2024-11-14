@@ -64,11 +64,12 @@
         </ion-item>
         
         <ion-item>
-          <ion-label>Patente</ion-label>
-          <ion-input id="plateInput" [(ngModel)]="car.plate" placeholder="Ej: ABC1234" type="text"></ion-input>
+          <ion-label position="stacked">Patente</ion-label>
+          <ion-input [(ngModel)]="car.plate" placeholder="Ej: ABC1234" type="text"></ion-input>
         </ion-item>
         
-        <ion-item>
+        
+        <ion-item class="input-item">
           <ion-label>Descripción</ion-label>
           <ion-textarea id="descriptionTextarea" [(ngModel)]="car.description"></ion-textarea>
         </ion-item>

@@ -1,28 +1,71 @@
-ion-item {
-  margin-bottom: 10px;
+ion-toolbar {
+  --background: #4a90e2;
+  --color: white;
 }
 
-ion-avatar {
-  margin-right: 10px;
+.filter-item {
+  margin-top: 10px;
+  padding: 10px;
 }
 
-ion-label {
-  display: flex;
-  flex-direction: column;
-}
-
-ion-button {
-  --border-radius: 20px;
-}
-/* Estilos adicionales para el contenedor y la tarjeta */
-.welcome-container {
-  text-align: center;
-  margin: 20px;
-}
-
-.welcome-container img {
-  width: 150px;
-  height: auto;
-  margin-top: 20px;
+.ride-card {
+  margin-bottom: 15px;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ride-header {
+  background: #4a90e2;
+  color: white;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+}
+
+ion-card-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+ion-card-subtitle {
+  font-size: 14px;
+  color: #ffffffcc;
+}
+
+ion-card-content {
+  font-size: 16px;
+  padding: 10px;
+}
+
+ion-footer {
+  border-top: 1px solid #ccc;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+ion-button[expand="full"] {
+  --border-radius: 20px;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+:host {
+  --background: url('/assets/background-image.jpg') no-repeat center center / cover; // Ruta al fondo que usas en la página
+}
+
+ion-content {
+  background: var(--background);
+}
+
+ion-footer {
+  background: transparent; // Mantiene el fondo igual al del contenido
+  border-top: none;
+}
+
+ion-button[expand="block"] {
+  --border-radius: 20px;
+  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.5); // Color semitransparente que combina con el fondo
+  --padding-start: 0;
+  --padding-end: 0;
 }

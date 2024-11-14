@@ -17,9 +17,6 @@
       </ion-card-header>
       <ion-card-content>
 
-        <!-- Mostrar la patente -->
-        
-
         <!-- Ubicación de Inicio -->
         <ion-item>
           <ion-label position="floating">Destino</ion-label>
@@ -39,11 +36,16 @@
           <ion-datetime
             displayFormat="DD/MM/YYYY HH:mm"
             pickerFormat="DD/MM/YYYY HH:mm"
-            min="2024-09-16T06:00"
-            max="2024-12-31T23:59"
-            [(ngModel)]="startDateTime">
+            [min]="getCurrentDate()" 
+            [(ngModel)]="startDateTime"
+            [disabled]="isSunday(startDateTime) || isHoliday(startDateTime)" 
+            [max]="getMaxDate()" 
+            (ionChange)="onDateChange($event)">
           </ion-datetime>
         </ion-item>
+        
+        
+        
 
         <!-- Número de Asientos -->
         <ion-item>

@@ -130,6 +130,10 @@ export class TransportePage implements OnInit {
 
   // Función para volver a la página anterior
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/menu-pasajero');
+  }
+  
+  goHome() {
+    this.navCtrl.navigateRoot('/home');
   }
 }

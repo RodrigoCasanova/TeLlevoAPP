@@ -39,3 +39,14 @@ ion-input, ion-textarea {
   margin-top: 20px;
   border-radius: 10px;
 }
+
+/* Apply specific styles to the Patente input item */
+.input-item {
+  --padding-start: 15px; /* Adjusts left padding for better spacing */
+  margin-bottom: 15px; /* Adds some space between each ion-item */
+}
+
+#plateInput, #descriptionTextarea {
+  padding-left: 8px; /* Extra space between label and input text */
+}
+

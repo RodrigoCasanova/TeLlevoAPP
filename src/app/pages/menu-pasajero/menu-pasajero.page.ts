@@ -30,6 +30,6 @@ export class MenuPasajeroPage {
     this.navCtrl.navigateForward('/ruta-pasajero'); // Cambia la ruta según tu configuración
   }
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.navigateBack('/home');
   }
 }
