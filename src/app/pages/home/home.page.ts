@@ -6,6 +6,8 @@ import { Firestore, getFirestore, doc, getDoc } from 'firebase/firestore'; // Ca
 
 import { environment } from 'src/environments/environment'; // Asegúrate de que esto se importe correctamente
 
+import { LocalNotifications } from '@capacitor/local-notifications';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -83,4 +85,15 @@ export class HomePage implements OnInit {
   cancelRide() {
     console.log('Viaje cancelado');
   }
+  
+
+// Solicita permisos para enviar notificaciones
+async requestPermission() {
+  const permission = await LocalNotifications.requestPermissions();
+  if (permission.display === 'granted') {
+    console.log('Permiso de notificación concedido');
+  } else {
+    console.log('Permiso de notificación denegado');
+  }
+}
 }

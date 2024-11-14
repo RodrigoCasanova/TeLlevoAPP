@@ -17,6 +17,10 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from 'src/environments/environment';
 import { DatePipe } from '@angular/common';
+import { initializeApp } from 'firebase/app';
+
+
+initializeApp(environment.firebaseConfig);
 
 @NgModule({
   declarations: [AppComponent],
