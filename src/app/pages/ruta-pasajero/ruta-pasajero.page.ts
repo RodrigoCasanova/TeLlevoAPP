@@ -15,7 +15,7 @@ export class RutaPasajeroPage implements OnInit {
   ride: any; // Aquí almacenamos los datos del viaje
   carDetails: IAuto | null = null;  // Para almacenar los detalles del auto
   conductorName: string = '';
-  startPosition = { lat: -36.79448680693151, lng: -73.06436871720969 }; // Ubicación de inicio (Duoc UC)
+  startPosition = { lat: -36.79448680693151, lng: -73.06436871720969 }; // Posición inicial
   endPosition: any;
   map: any;
   directionsService: any;
@@ -58,10 +58,13 @@ export class RutaPasajeroPage implements OnInit {
         );
 
         // Inicializa el mapa después de obtener la patente y los detalles
-        this.initMap();
+        
       }
     });
+    this.initMap(); // Inicializar el mapa aquí
   }
+
+
 
   // Definición del método getSelectedCarByPlate
   getSelectedCarByPlate(plate: string) {
@@ -69,6 +72,7 @@ export class RutaPasajeroPage implements OnInit {
   }
 
   initMap() {
+    // Inicializa el mapa de Google Maps
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.startPosition,
       zoom: 10,
@@ -85,14 +89,18 @@ export class RutaPasajeroPage implements OnInit {
     this.directionsRenderer.setMap(this.map);
 
     if (this.endPosition) {
-      this.calculateAndDisplayRoute();
-      this.placeMarkers();
+      this.placeMarkers(); // Coloca los marcadores si ya hay un destino
     }
   }
 
   calculateAndDisplayRoute() {
-    if (!this.endPosition) return;
-
+    // Verifica si directionsService está disponible y si endPosition está definida
+    if (!this.directionsService || !this.endPosition) {
+      console.error('directionsService no está inicializado o no hay destino');
+      return; // Si no hay un destino o directionsService no está disponible, no se calcula la ruta
+    }
+  
+    // Calcula la ruta si todo está correcto
     this.directionsService.route(
       {
         origin: this.startPosition,
@@ -109,19 +117,30 @@ export class RutaPasajeroPage implements OnInit {
       }
     );
   }
+  
+  ionViewDidEnter() {
+    // Verifica que el mapa esté inicializado antes de calcular la ruta
+    if (this.directionsService) {
+      this.calculateAndDisplayRoute();  // Solo se llama si directionsService está disponible
+    } else {
+      console.error('directionsService no está disponible');
+    }
+  }
+  
 
   placeMarkers() {
+    // Coloca los marcadores en el mapa
     new google.maps.Marker({
       position: this.startPosition,
       map: this.map,
-      title: 'Ubicación Actual (Duoc UC)',
+      title: 'Inicio (Ubicación Fija)',
     });
 
     if (this.endPosition) {
       new google.maps.Marker({
         position: this.endPosition,
         map: this.map,
-        title: 'Destino: ' + this.ride.location,
+        title: 'Destino: ' + this.ride.location, // Usamos startLocation como destino
       });
     }
   }
@@ -130,9 +149,11 @@ export class RutaPasajeroPage implements OnInit {
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ address: destination }, (results: any, status: any) => {
       if (status === google.maps.GeocoderStatus.OK && results[0]) {
-        this.endPosition = results[0].geometry.location;
-        this.calculateAndDisplayRoute();
-        this.placeMarkers();
+        this.endPosition = results[0].geometry.location; // Obtiene las coordenadas del destino
+        this.calculateAndDisplayRoute(); // Calcula la ruta hacia el destino
+        this.placeMarkers(); // Coloca el marcador en el destino
+      } else {
+        window.alert('No se pudo encontrar el destino: ' + status);
       }
     });
   }

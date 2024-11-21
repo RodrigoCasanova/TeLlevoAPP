@@ -144,7 +144,6 @@ export class ViajePasajeroPage implements OnInit {
 
   async startTrip() {
     if (this.hasActiveTrip) {
-      // Si el usuario tiene un viaje activo, mostramos un mensaje de alerta
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'Ya tienes un viaje agendado. No puedes reservar otro hasta que lo hayas completado.',
@@ -155,28 +154,62 @@ export class ViajePasajeroPage implements OnInit {
     }
   
     if (this.ride.seats > 0) {
-      // Disminuir los asientos disponibles en la base de datos
-      this.ride.seats -= 1;
-  
-      // Agregar el ID del pasajero al viaje
-      this.ride.pasajeroIDs = this.ride.pasajeroIDs || []; // Inicializa si no existe
-      
-  
-      try {
-        // Actualiza los datos del viaje en la base de datos (colección transports)
-        await this.firebaseService.updateTransportSeatsAndPassengers(this.ride.id, this.ride.seats, this.ride.pasajeroIDs);
-  
-        // Navegar a la página de ruta para el pasajero, pasando los detalles del viaje y los pasajeros
-        this.router.navigate(['/ruta-pasajero'], {
-          queryParams: {
-            ride: JSON.stringify(this.ride),
+      // Mostrar alerta de confirmación
+      const confirmAlert = await this.alertController.create({
+        header: 'Confirmar Viaje',
+        message: '¿Seguro que quieres tomar este viaje?',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              console.log('El pasajero ha cancelado la reserva.');
+            },
           },
-        });
-      } catch (error) {
-        console.error('Error al actualizar los asientos y agregar al pasajero:', error);
-      }
+          {
+            text: 'Aceptar',
+            handler: async () => {
+              this.ride.seats -= 1;
+              this.ride.pasajeroIDs = this.ride.pasajeroIDs || [];
+  
+              try {
+                // Llama a currentUser sin paréntesis
+                const user = await this.firebaseService.currentUser;
+                const userData = await this.firebaseService.getUserData(user.uid);
+  
+                const pasajeroNombre = userData?.nombre || 'Pasajero';
+  
+                // Actualizar los asientos y agregar el pasajero
+                await this.firebaseService.updateTransportSeatsAndPassengers(this.ride.id, this.ride.seats, this.ride.pasajeroIDs);
+  
+                // Enviar notificación al conductor
+                const mensajeNotificacion = `${pasajeroNombre} ha reservado tu viaje.`;
+                await this.firebaseService.sendNotification(this.ride.userId, mensajeNotificacion);
+  
+                // Muestra la alerta de aceptación del viaje
+                const successAlert = await this.alertController.create({
+                  header: '¡Viaje Aceptado!',
+                  message: `${pasajeroNombre} ha sido agregado al viaje. El conductor será notificado.`,
+                  buttons: ['OK'],
+                });
+                await successAlert.present();
+  
+                // Navegar a la página de ruta para el pasajero
+                this.router.navigate(['/ruta-pasajero'], {
+                  queryParams: {
+                    ride: JSON.stringify(this.ride),
+                  },
+                });
+              } catch (error) {
+                console.error('Error al actualizar los asientos y agregar al pasajero:', error);
+              }
+            },
+          },
+        ],
+      });
+  
+      await confirmAlert.present();
     } else {
-      // Si no hay asientos disponibles, muestra un mensaje de error
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'No hay asientos disponibles para este viaje.',
@@ -185,6 +218,8 @@ export class ViajePasajeroPage implements OnInit {
       await alert.present();
     }
   }
+  
+  
   
   
 

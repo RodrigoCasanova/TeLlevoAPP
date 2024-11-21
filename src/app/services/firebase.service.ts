@@ -7,6 +7,7 @@ import { doc, deleteDoc } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';  // Importar 'map' de RxJS
 import { Observable } from 'rxjs';
 import { NavController, AlertController } from '@ionic/angular';
+import { FCM } from '@capacitor-community/fcm';  // Asegúrate de que esta librería esté instalada
 
 
 
@@ -323,7 +324,24 @@ async getPassengerTransports(uid: string): Promise<any[]> {
     throw error;
   }
 }
-  
+ 
+async sendNotification(userId: string, message: string): Promise<void> {
+  try {
+    // Agrega la notificación en la colección 'notifications' en Firestore
+    await this.firestore.collection('notifications').add({
+      userId: userId,      // ID del dueño del viaje
+      message: message,    // Mensaje de la notificación
+      timestamp: new Date() // Fecha y hora de la notificación
+    });
+    console.log('Notificación enviada.');
+  } catch (error) {
+    console.error('Error al enviar la notificación:', error);
+  }
+}
+
+
+
+
 
   
 
