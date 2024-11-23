@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "784064166312",
+    "project_id": "tellevoapp-6638c",
+    "storage_bucket": "tellevoapp-6638c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784064166312:android:065b931ab1403d9502859d",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784064166312-l42rp2b9c5idiaa3d0k8nnnuaha6o58l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_hB4E_CgqmYMxUqTORth0vMiJtyYNJKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "784064166312-l42rp2b9c5idiaa3d0k8nnnuaha6o58l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
