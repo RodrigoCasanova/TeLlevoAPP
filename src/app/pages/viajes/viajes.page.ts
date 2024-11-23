@@ -62,9 +62,22 @@ export class ViajesPage implements OnInit {
           seats: transport.seats,
           startDateTime: this.datePipe.transform(transport.startDateTime, 'dd/MM/yyyy HH:mm') || 'Sin Hora',
         }));
+
+        // Guardar los datos en localStorage
+        this.saveToLocalStorage(this.userTransports);
       }
     } catch (error) {
       console.error('Error al cargar los viajes:', error);
+    }
+  }
+
+  // Función para guardar los datos en localStorage
+  saveToLocalStorage(data: ITransporte[]) {
+    try {
+      localStorage.setItem('userTransports', JSON.stringify(data));
+      console.log('Viajes guardados en localStorage:', data);
+    } catch (error) {
+      console.error('Error al guardar en localStorage:', error);
     }
   }
 

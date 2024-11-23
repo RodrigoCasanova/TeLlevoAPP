@@ -28,7 +28,6 @@ export class HistorialConductorPage implements OnInit {
       }
     });
   }
-  
 
   // Función para cargar los viajes del usuario autenticado
   async loadViajes() {
@@ -47,6 +46,9 @@ export class HistorialConductorPage implements OnInit {
           pasajeros: viaje.seats || 'Asientos no especificados',
           detallesPasajeros: [] // Agrega pasajeros si tienes esta información en otro lugar
         }));
+
+        // Guardar los datos en localStorage
+        this.saveToLocalStorage(this.viajes);
       } else {
         console.log('No se pudo obtener el usuario actual');
       }
@@ -54,9 +56,16 @@ export class HistorialConductorPage implements OnInit {
       console.error('Error al cargar los viajes:', error);
     }
   }
-  
-  
-  
+
+  // Función para guardar los viajes en localStorage
+  saveToLocalStorage(data: any[]) {
+    try {
+      localStorage.setItem('driverRides', JSON.stringify(data));
+      console.log('Viajes guardados en localStorage:', data);
+    } catch (error) {
+      console.error('Error al guardar en localStorage:', error);
+    }
+  }
 
   // Función para controlar la expansión de los detalles de los pasajeros
   togglePassengerDetails(index: number) {

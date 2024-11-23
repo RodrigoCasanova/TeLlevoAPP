@@ -30,6 +30,9 @@ export class HistorialPasajeroPage implements OnInit {
         this.getPassengerTransports(this.currentPassengerId).then(data => {
           console.log("Viajes encontrados:", data);
           this.passengerRides = data; // Asignamos los transportes obtenidos
+
+          // Guardar los viajes en localStorage
+          this.saveToLocalStorage(data);
         }).catch(error => {
           console.error("Error al obtener los viajes:", error);
         });
@@ -106,6 +109,16 @@ export class HistorialPasajeroPage implements OnInit {
     const ride = this.passengerRides.find(r => r.id === rideId);
     if (ride) {
       ride.showDrivers = !ride.showDrivers; // Alterna la visibilidad de la lista de conductores
+    }
+  }
+
+  // Función para guardar los viajes en localStorage
+  saveToLocalStorage(data: any[]) {
+    try {
+      localStorage.setItem('passengerRides', JSON.stringify(data));
+      console.log('Viajes guardados en localStorage:', data);
+    } catch (error) {
+      console.error('Error al guardar en localStorage:', error);
     }
   }
 
