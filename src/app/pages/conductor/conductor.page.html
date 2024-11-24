@@ -38,7 +38,7 @@
             pickerFormat="DD/MM/YYYY HH:mm"
             [min]="getCurrentDate()" 
             [(ngModel)]="startDateTime"
-            [disabled]="isSunday(startDateTime) || isHoliday(startDateTime)" 
+            [disabled]=" isHoliday(startDateTime)" 
             [max]="getMaxDate()" 
             (ionChange)="onDateChange($event)">
           </ion-datetime>

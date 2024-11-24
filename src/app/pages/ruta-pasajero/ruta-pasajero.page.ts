@@ -21,6 +21,7 @@ export class RutaPasajeroPage implements OnInit {
   directionsService: any;
   directionsRenderer: any;
   plate: string = '';  // Campo para la patente
+  dataLoaded: boolean = false;  // Flag para indicar si los datos están cargados
 
   constructor(
     private navCtrl: NavController,
@@ -33,7 +34,7 @@ export class RutaPasajeroPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params && params['ride']) {
         this.ride = JSON.parse(params['ride']);
-        console.log(this.ride);
+        console.log('Ride data:', this.ride);
         this.updateDestinationCoordinates(this.ride.location);
 
         // Guardar los datos del viaje en localStorage
@@ -48,6 +49,12 @@ export class RutaPasajeroPage implements OnInit {
 
               // Guardar los detalles del auto en localStorage
               localStorage.setItem('carDetails', JSON.stringify(this.carDetails));
+
+              // Marcar los datos como cargados
+              this.dataLoaded = true;
+
+              // Llamar a la función para inicializar el mapa después de que los datos se han cargado
+              this.loadMap();
             } else {
               console.error('No se encontraron detalles para la patente');
             }
@@ -56,23 +63,24 @@ export class RutaPasajeroPage implements OnInit {
             console.error('Error al obtener datos:', error);
           }
         );
-
-        // Inicializa el mapa después de obtener la patente y los detalles
-        
       }
     });
-    this.initMap(); // Inicializar el mapa aquí
   }
-
-
 
   // Definición del método getSelectedCarByPlate
   getSelectedCarByPlate(plate: string) {
     return this.firebaseService.getSelectedCarByPlate(plate);  // Llama al método de FirebaseService
   }
 
-  initMap() {
-    // Inicializa el mapa de Google Maps
+  loadMap() {
+    // Verifica que los datos estén completamente cargados antes de inicializar el mapa
+    if (!this.dataLoaded) {
+      console.log('Esperando a que los datos se carguen...');
+      return; // Si los datos no están cargados, no inicializa el mapa
+    }
+
+    console.log('Inicializando el mapa...');
+    // Ahora que los datos están listos, inicializamos el mapa
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.startPosition,
       zoom: 10,
@@ -90,6 +98,7 @@ export class RutaPasajeroPage implements OnInit {
 
     if (this.endPosition) {
       this.placeMarkers(); // Coloca los marcadores si ya hay un destino
+      this.calculateAndDisplayRoute(); // Calcula la ruta si el destino ya está disponible
     }
   }
 
@@ -99,7 +108,8 @@ export class RutaPasajeroPage implements OnInit {
       console.error('directionsService no está inicializado o no hay destino');
       return; // Si no hay un destino o directionsService no está disponible, no se calcula la ruta
     }
-  
+
+    console.log('Calculando ruta...');
     // Calcula la ruta si todo está correcto
     this.directionsService.route(
       {
@@ -117,16 +127,16 @@ export class RutaPasajeroPage implements OnInit {
       }
     );
   }
-  
+
   ionViewDidEnter() {
     // Verifica que el mapa esté inicializado antes de calcular la ruta
-    if (this.directionsService) {
+    if (this.directionsService && this.endPosition) {
+      console.log('Mapa y destino están listos, calculando ruta...');
       this.calculateAndDisplayRoute();  // Solo se llama si directionsService está disponible
     } else {
-      console.error('directionsService no está disponible');
+      console.error('directionsService no está disponible o no hay destino');
     }
   }
-  
 
   placeMarkers() {
     // Coloca los marcadores en el mapa

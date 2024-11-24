@@ -49,9 +49,7 @@ ion-button[expand="full"] {
   --padding-start: 0;
   --padding-end: 0;
 }
-:host {
-  --background: url('/assets/background-image.jpg') no-repeat center center / cover; // Ruta al fondo que usas en la página
-}
+
 
 ion-content {
   background: var(--background);

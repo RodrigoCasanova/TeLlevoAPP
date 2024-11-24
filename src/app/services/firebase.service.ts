@@ -338,7 +338,10 @@ async sendNotification(userId: string, message: string): Promise<void> {
     console.error('Error al enviar la notificación:', error);
   }
 }
-
+async getCurrentUserEmail(): Promise<string | null> {
+  const user = await this.currentUser;
+  return user?.email || null;
+}
 
 
 

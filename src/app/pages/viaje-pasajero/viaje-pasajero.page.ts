@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirebaseService } from 'src/app/services/firebase.service';
+import emailjs from 'emailjs-com';
 
 declare var google: any;
 
@@ -123,24 +124,15 @@ export class ViajePasajeroPage implements OnInit {
   }
 
   // Método para verificar si el usuario ya tiene un viaje activo
-  // Método para verificar si el usuario ya tiene un viaje activo
   async checkActiveTrip() {
-    
-      // Asegúrate de pasar el userId real, por ejemplo, el ID del pasajero actual
-      const userId = this.ride.pasajeroIDs; // Reemplaza esto con el ID correcto, tal vez 'this.ride.pasajeroIDs[0]' si estás buscando al primer pasajero.
-      const activeTrip = await this.firebaseService.getActiveTripForUser(userId);
-      
-      if (activeTrip) {
-        this.hasActiveTrip = true; // El usuario tiene un viaje activo
-      } else {
-        this.hasActiveTrip = false; // El usuario no tiene un viaje activo
-      }
-    
-      
-    
+    const userId = this.ride.pasajeroIDs[0]; // Asegúrate de usar el ID correcto del pasajero.
+    const activeTrip = await this.firebaseService.getActiveTripForUser(userId);
+    if (activeTrip) {
+      this.hasActiveTrip = true; // El usuario tiene un viaje activo
+    } else {
+      this.hasActiveTrip = false; // El usuario no tiene un viaje activo
+    }
   }
-  //listo
-
 
   async startTrip() {
     if (this.hasActiveTrip) {
@@ -154,7 +146,6 @@ export class ViajePasajeroPage implements OnInit {
     }
   
     if (this.ride.seats > 0) {
-      // Mostrar alerta de confirmación
       const confirmAlert = await this.alertController.create({
         header: 'Confirmar Viaje',
         message: '¿Seguro que quieres tomar este viaje?',
@@ -173,20 +164,20 @@ export class ViajePasajeroPage implements OnInit {
               this.ride.pasajeroIDs = this.ride.pasajeroIDs || [];
   
               try {
-                // Llama a currentUser sin paréntesis
                 const user = await this.firebaseService.currentUser;
                 const userData = await this.firebaseService.getUserData(user.uid);
   
                 const pasajeroNombre = userData?.nombre || 'Pasajero';
+                const pasajeroEmail = await this.firebaseService.getCurrentUserEmail();
   
-                // Actualizar los asientos y agregar el pasajero
                 await this.firebaseService.updateTransportSeatsAndPassengers(this.ride.id, this.ride.seats, this.ride.pasajeroIDs);
   
-                // Enviar notificación al conductor
                 const mensajeNotificacion = `${pasajeroNombre} ha reservado tu viaje.`;
                 await this.firebaseService.sendNotification(this.ride.userId, mensajeNotificacion);
   
-                // Muestra la alerta de aceptación del viaje
+                // Enviar el correo al conductor con el correo del pasajero
+                this.enviarCorreoAlConductor(pasajeroNombre, pasajeroEmail);  // Usamos el correo del pasajero
+  
                 const successAlert = await this.alertController.create({
                   header: '¡Viaje Aceptado!',
                   message: `${pasajeroNombre} ha sido agregado al viaje. El conductor será notificado.`,
@@ -194,7 +185,6 @@ export class ViajePasajeroPage implements OnInit {
                 });
                 await successAlert.present();
   
-                // Navegar a la página de ruta para el pasajero
                 this.router.navigate(['/ruta-pasajero'], {
                   queryParams: {
                     ride: JSON.stringify(this.ride),
@@ -219,8 +209,24 @@ export class ViajePasajeroPage implements OnInit {
     }
   }
   
+  enviarCorreoAlConductor(pasajeroNombre: string, pasajeroEmail: string) {
+    const mensajeCorreo = `Reserva para el viaje a ${this.ride.location} el ${this.ride.startDateTime}`;
   
+    const templateParams = {
+      from_name: pasajeroNombre,         // Nombre del pasajero
+      from_email: pasajeroEmail,         // Correo del pasajero
+      to_name: this.conductorName,       // Nombre del conductor
+      message: mensajeCorreo,            // Detalles del viaje
+    };
   
+    emailjs.send('service_717m0hn', 'template_3fcbq6z', templateParams, 'o0XtQY9cZmqfClwTh')
+      .then((response) => {
+        console.log('Correo enviado exitosamente:', response);
+      })
+      .catch((error) => {
+        console.error('Error al enviar el correo:', error);
+      });
+  }
   
 
   goBack() {
